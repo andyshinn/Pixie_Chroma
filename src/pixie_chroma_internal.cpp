@@ -10,7 +10,7 @@
 // TODO: Make print() and write() calls allocate proper char array size
 // ...for each variable type, instead of just 32 chars no matter the type.
 
-#include "Pixie_Chroma.h" 
+#include "Pixie_Chroma.h"
 #include "utility/pixie_utility.h"
 
 // ---------------------------------------------------------------------------------------------------------|
@@ -21,16 +21,16 @@
 /*! ############################################################################
     @brief
     Used to initialize the PixieChroma library.
-    
+
     @details
     Example usage before `setup()` would be:
-    
+
         #include "Pixie_Chroma.h"
         PixieChroma pix;
-    
+
     Because each of these functions are contained in the PixieChroma class
 	object, you'll use them like this:
-    
+
         pix.print( "Hello!" );
 *///............................................................................
 PixieChroma::PixieChroma(){}
@@ -44,39 +44,39 @@ PixieChroma::PixieChroma(){}
     Initializes the display buffer, populates the XY coordinate table, defaults
     the display colors to green, loads the default CRGBPalette, initializes
     FastLED, and sets the default power budget.
-             
+
     @details
     Pixie Chroma allows for multi-row displays, which are wired in western
     reading order (left to right, top to bottom) and their shape is defined
     here. For example, a 16-Pixie display with two rows of eight:
-              
+
         data_pin
            |
         +--+-+   +----+   +----+   +----+   +----+   +----+   +----+   +----+
-        |  1 |-->|  2 |-->|  3 |-->|  4 |-->|  5 |-->|  6 |-->|  7 |-->|  8 | 
+        |  1 |-->|  2 |-->|  3 |-->|  4 |-->|  5 |-->|  6 |-->|  7 |-->|  8 |
         +----+   +----+   +----+   +----+   +----+   +----+   +----+   +--+-+
                                                                           |
            +--------------------------------------------------------------+
            |
         +--+-+   +----+   +----+   +----+   +----+   +----+   +----+   +----+
-        |  9 |-->| 10 |-->| 11 |-->| 12 |-->| 13 |-->| 14 |-->| 15 |-->| 16 | 
+        |  9 |-->| 10 |-->| 11 |-->| 12 |-->| 13 |-->| 14 |-->| 15 |-->| 16 |
         +----+   +----+   +----+   +----+   +----+   +----+   +----+   +----+
 
     The corresponding setup for this display layout would be:
-    
+
         #include "Pixie_Chroma.h"
         PixieChroma pix;
-        
+
         #define DATA_PIN 5
         #define PIXIES_X 8
         #define PIXIES_Y 2
-        
+
         void setup() {
             pix.begin( DATA_PIN, PIXIES_X, PIXIES_Y );
         }
-    
+
     For faster performance on large displays, see begin_quad().
-    
+
     @param  data_pin GPIO pin to use for FastLED output
     @param  pixies_x Number of Pixie PCBs in the X axis of your display
     @param  pixies_y Number of Pixie PCBs in the Y axis of your display
@@ -118,38 +118,38 @@ void PixieChroma::begin( const uint8_t data_pin, uint8_t pixies_x, uint8_t pixie
     Initializes the display buffer, populates the XY coordinate table, defaults
     the display colors to green, loads the default CRGBPalette, initializes
     FastLED **for Quad Mode**, and sets the default power budget.
-    
+
     @details
     This version of begin() is special, in that it will send your image data to
     the LEDs in 4 parallel streams to increase speed.
-    
+
     Unfortunately, this currently requires hard-coded pins to function *due to
     FastLED limitations*:
-    
+
     **ESP32 / ESP8266:**
-	
+
     - DATA_OUT_1:  **GPIO 12 / D6**
     - DATA_OUT_2:  **GPIO 13 / D7**
     - DATA_OUT_3:  **GPIO 14 / D5**
     - DATA_OUT_4:  **GPIO 15 / D8**
-    
+
     **TEENSY 3.X:**
-    
+
     - DATA_OUT_1:  **GPIO 2**
     - DATA_OUT_2:  **GPIO 14**
     - DATA_OUT_3:  **GPIO 7**
     - DATA_OUT_4:  **GPIO 8**
-    
+
     **(If your microcontroller is not listed here, it does not (yet) support Quad Mode.)**
-    
+
     On each data line, you'll wire `pixies_per_pin` number of Pixie
     Chromas, with the final image being seamlessly spread across these
     four lines.
-    
+
     For example, if you have 16 Pixie Chromas (in two rows of eight) and
     have Quad Mode enabled, then each of the 4 data lines will have 4
     Pixie Chromas like so:
-    
+
     - **DATA_OUT_1** GPIO
       - Pixie 1
       - Pixie 2
@@ -170,42 +170,42 @@ void PixieChroma::begin( const uint8_t data_pin, uint8_t pixies_x, uint8_t pixie
       - Pixie 14
       - Pixie 15
       - Pixie 16
-    
+
     The corresponding setup for this display layout would be:
-    
+
         #include "Pixie_Chroma.h"
         PixieChroma pix;
-        
+
         #define PIXIES_PER_PIN 4
         #define PIXIES_X       8
         #define PIXIES_Y       2
-        
+
         void setup() {
             pix.begin_quad( PIXIES_PER_PIN, PIXIES_X, PIXIES_Y );
         }
-    
+
     Then, with the displays physically arranged in western reading order
     (left to right, top to bottom) you're ready to begin!
-    
+
         DATA_OUT_1 --+                       DATA_OUT_2 ----+
                      |                                      |
                   +--+-+   +----+   +----+   +----+  ||  +--+-+   +----+   +----+   +----+
-                  |  1 |-->|  2 |-->|  3 |-->|  4 |  ||  |  5 |-->|  6 |-->|  7 |-->|  8 | 
-                  +----+   +----+   +----+   +----+  ||  +----+   +----+   +----+   +----+ 
-    
+                  |  1 |-->|  2 |-->|  3 |-->|  4 |  ||  |  5 |-->|  6 |-->|  7 |-->|  8 |
+                  +----+   +----+   +----+   +----+  ||  +----+   +----+   +----+   +----+
+
         DATA_OUT_3 --+                       DATA_OUT_4 ----+
                      |                                      |
                   +--+-+   +----+   +----+   +----+  ||  +--+-+   +----+   +----+   +----+
-                  |  9 |-->| 10 |-->| 11 |-->| 12 |  ||  | 13 |-->| 14 |-->| 15 |-->| 16 | 
-                  +----+   +----+   +----+   +----+  ||  +----+   +----+   +----+   +----+ 
-    
+                  |  9 |-->| 10 |-->| 11 |-->| 12 |  ||  | 13 |-->| 14 |-->| 15 |-->| 16 |
+                  +----+   +----+   +----+   +----+  ||  +----+   +----+   +----+   +----+
+
     Using begin_quad() to enable the Quad Mode driver will
     always send the 4 lines of data in parallel, saving on time per frame.
-    
+
     begin_quad() ideally **should not be used with less than 4 Pixie Chromas**,
     and with at least one on each line. Even if only two pins are physically
     used, all 4 pins are still occupied by Quad Mode.
-    
+
     @param  pixies_per_pin  Pixies per data pin
     @param  pixies_x        Number of Pixie PCBs in the X axis of your display
     @param  pixies_y        Number of Pixie PCBs in the Y axis of your display
@@ -227,7 +227,7 @@ void PixieChroma::begin_quad( uint8_t pixies_per_pin, uint8_t pixies_x, uint8_t 
 
     color_map_out = new CRGB[ led_count ];
     mask_out = new uint8_t[ led_count ];
-    
+
     for( uint16_t i = 0; i < led_count; i++ ){
         color_map[i] = CRGB( 0,255,0 );
     }
@@ -237,38 +237,38 @@ void PixieChroma::begin_quad( uint8_t pixies_per_pin, uint8_t pixies_x, uint8_t 
     #if defined( ARDUINO_ARCH_ESP8266 )
 		// WS2811_PORTA on ESP8266 takes up GPIO 12, GPIO 13, GPIO 14 and GPIO 15 for Quad Mode
 		FastLED.addLeds<WS2811_PORTA,4>( color_map_out, pixies_per_pin * leds_per_pixie ).setCorrection( TypicalLEDStrip ); // Initialize FastLED
-    
+
 	#elif defined( ARDUINO_ARCH_ESP32 )
 		// Quad Mode on ESP32 takes up GPIO 12, GPIO 13, GPIO 14 and GPIO 27
 		FastLED.addLeds<NEOPIXEL, 13>( // Initialize FastLED Data Out 1
 			color_map_out,
 			( pixies_per_pin*leds_per_pixie ) * 0,
 			( pixies_per_pin*leds_per_pixie )
-		).setCorrection( TypicalLEDStrip ); 
-		
+		).setCorrection( TypicalLEDStrip );
+
 		FastLED.addLeds<NEOPIXEL, 12>( // Initialize FastLED Data Out 2
 			color_map_out,
 			( pixies_per_pin*leds_per_pixie ) * 1,
 			( pixies_per_pin*leds_per_pixie )
 		).setCorrection( TypicalLEDStrip );
-		
+
 		FastLED.addLeds<NEOPIXEL, 14>( // Initialize FastLED Data Out 3
 			color_map_out,
 			( pixies_per_pin*leds_per_pixie ) * 2,
 			( pixies_per_pin*leds_per_pixie )
 		).setCorrection( TypicalLEDStrip );
-		
+
 		FastLED.addLeds<NEOPIXEL, 27>( // Initialize FastLED Data Out 4
 			color_map_out,
 			( pixies_per_pin*leds_per_pixie ) * 3,
 			( pixies_per_pin*leds_per_pixie )
 		).setCorrection( TypicalLEDStrip );
-		
+
     #elif defined( ARDUINO_ARCH_TEENSY_3_X )
 		// WS2811_PORTD on TEENSY 3.X takes up GPIO 2, GPIO 14, GPIO 7 and GPIO 8 for Quad Mode
 		FastLED.addLeds<WS2811_PORTD,4>( color_map_out, pixies_per_pin * leds_per_pixie ).setCorrection( TypicalLEDStrip ); // Initialize FastLED
     #endif
-    
+
     set_color_animation( ANIMATION_NULL ); // --- Set animation function to an empty one
     clear(); // --------------------------- Clear anything in mask ( should be empty anyways ), reset cursor
     set_max_power( 5, 500 ); // ----------- Set default power budget in volts and milliamps
@@ -278,10 +278,10 @@ void PixieChroma::begin_quad( uint8_t pixies_per_pin, uint8_t pixies_x, uint8_t 
 /*! ############################################################################
     @brief
     Accepts a preset Color Animation or custom function to use for the animation ISR.
-    
+
     @details
     For a list of predefined Color Animations, see pixie_animations.h.
-    
+
     @param  action  Function to set as an animation ISR
 *///............................................................................
 void PixieChroma::set_color_animation( void ( *action )(PixieChroma*, float) ) {
@@ -301,7 +301,7 @@ void PixieChroma::set_color_animation( void ( *action )(PixieChroma*, float) ) {
     @brief
     Used to scale the animation speed of animation ISRs that can use
     pix.animation_speed() to scale their speeds or for other effects
-                
+
     @param  speed  Floating point value: 1.0 = 100%, 3.2 = 320%, 0.5 = 50%
 *///............................................................................
 void PixieChroma::set_color_animation_speed( float speed ){
@@ -313,7 +313,7 @@ void PixieChroma::set_color_animation_speed( float speed ){
     @brief
     Takes an 8-bit brightness value and passes it to FastLED internally, to
     provide global brightness control with temporal dithering.
-    
+
     @param  level  8-bit global brightness value ( 0-255 )
 *///............................................................................
 void PixieChroma::set_brightness( uint8_t level ){
@@ -325,7 +325,7 @@ void PixieChroma::set_brightness( uint8_t level ){
     @brief
     Sets the target frame rate for animation. This target frame rate is only
     used to calculate `delta` in custom/preset animation functions.
-            
+
     @details
     This does not change your real frame rate, or even govern it: it is left up
     to the user to use frequent show() calls or set_update_mode(AUTOMATIC). The
@@ -393,7 +393,7 @@ void PixieChroma::set_line_wrap( bool enabled ){
 /*! ############################################################################
     @brief
     Sets the maximum power budget in volts and milliamps.
-    
+
     @details
     Knowing the average power consumption of these LEDs at any given color,
     FastLED will automatically globally scale down the output values with
@@ -414,22 +414,22 @@ void PixieChroma::set_max_power( float volts, uint16_t milliamps ){
     @brief
     Accepts a const uint8_t (8-bit) array to generate a FastLED Gradient
     Palette at runtime:
-    
+
         const uint8_t* my_gradient_palette[] = {
         //  [INDEX],  [R_VAL],  [G_VAL],  [B_VAL],
-        
-            0,        255,      0,        0, 
-            127,      0,        255,      0, 
-            255,      0,        0,        255, 
+
+            0,        255,      0,        0,
+            127,      0,        255,      0,
+            255,      0,        0,        255,
         };
-    
+
     On each line is the index of the color ( 0-255 ) to express the position in
     the gradient this color occurs. So in the given example, it is a gradient
     from red at 0, to green at 127, to blue at 255.
-    
+
     @param  pal  FastLED "Gradient Palette" array
 *///............................................................................
-void PixieChroma::set_palette( const uint8_t* pal ){ 
+void PixieChroma::set_palette( const uint8_t* pal ){
 	if(custom_animation == false){
 		set_color_animation(ANIMATION_STATIC);
 	}
@@ -443,7 +443,7 @@ void PixieChroma::set_palette( const uint8_t* pal ){
     @brief
     Accepts a FastLED CRGBPalette16 object to set the current color palette for
     animation.
-    
+
     @param  pal  FastLED CRGBPalette16 object to use
 *///............................................................................
 void PixieChroma::set_palette( CRGBPalette16 pal ){ // STANDARD PALETTE
@@ -459,7 +459,7 @@ void PixieChroma::set_palette( CRGBPalette16 pal ){ // STANDARD PALETTE
 /*! ############################################################################
     @brief
 	Sets the scroll behavior:
-	
+
 	- INSTANT (No smooth animation, shift whole characters at a time)
 	- SMOOTH (Smooth pixel scrolling)
 	- SHIFT (Smooth pixel scrolling with stops at each whole display)
@@ -468,7 +468,7 @@ void PixieChroma::set_palette( CRGBPalette16 pal ){ // STANDARD PALETTE
 *///............................................................................
 void PixieChroma::set_scroll_type(t_scroll_type type){
 	scroll_type = type;
-	
+
 	if(scroll_type == INSTANT){
 		scroll_frame_delay_ms = 0;
 		scroll_hold_ms        = 150;
@@ -488,18 +488,18 @@ void PixieChroma::set_scroll_type(t_scroll_type type){
     @brief
     Allows for automatic show() calls at a specified frames per second if
     AUTOMATIC is used. (uses Ticker.attach_ms() internally)
-            
+
     @details
     This lets you use things like print() as infrequently as you'd like, since
     show() will automatically run in the background to keep the current
     animation function running smoothly.
-            
+
     Use in conjunction with hold() and free() to prevent show() calls during
     text/image construction, leading to unintended partial frames being shown.
     Be aware, hold() does not prevent animation / palette updates (only mask
     updates) so animations will still run smoothly during hold() times until
     free() is called and the mask is finally updated.
-    
+
     @param  mode  AUTOMATIC or MANUAL. AUTOMATIC will call show() at `FPS`
                   using an ISR, MANUAL allows you call show() when you like.
 
@@ -509,7 +509,7 @@ void PixieChroma::set_scroll_type(t_scroll_type type){
 void PixieChroma::set_update_mode( t_update_mode mode, uint16_t FPS ){
     if( mode == AUTOMATIC && ticker_running == false ){
         set_frame_rate_target( FPS );
-		
+
 		#if defined( ARDUINO_ARCH_ESP8266 ) || defined( ARDUINO_ARCH_ESP32 )
 			animate.attach_ms<typeof this>(
 				round(1000 / float(FPS)),
@@ -529,7 +529,7 @@ void PixieChroma::set_update_mode( t_update_mode mode, uint16_t FPS ){
 			);
 			animate.priority(1);
 		#endif
-		
+
         ticker_running = true;
     }
     else if( mode == MANUAL && ticker_running == true ){
@@ -550,18 +550,18 @@ void PixieChroma::set_update_mode( t_update_mode mode, uint16_t FPS ){
 /*! ############################################################################
     @brief
     Internal function for rendering a single char to the mask buffer.
-    
+
     @details
     All other write() function overloads eventually end up casted to char*
     strings and passed to this function one character at a time for rendering.
-    
+
     @param  chr     char to render
     @param  x_dest  X pixel position of write
     @param  y_dest  Y pixel position of write
 *///............................................................................
 void PixieChroma::add_char( char chr, int16_t x_dest, int16_t y_dest ){
 	color(print_col, x_dest/display_width, y_dest/display_height);
-	
+
     if ( chr >= printable_ascii_offset ) {
         chr -= printable_ascii_offset;
     }
@@ -592,7 +592,7 @@ void PixieChroma::add_char( char chr, int16_t x_dest, int16_t y_dest ){
 /*! ############################################################################
     @brief
     Internal function for rendering a single bitmap to the mask buffer.
-    
+
     @param  bitmap_col_1  Column 1 data of this bitmap
     @param  bitmap_col_2  Column 2 data of this bitmap
     @param  bitmap_col_3  Column 3 data of this bitmap
@@ -601,7 +601,7 @@ void PixieChroma::add_char( char chr, int16_t x_dest, int16_t y_dest ){
     @param  x_dest        X pixel position of write
     @param  y_dest        Y pixel position of write
 *///............................................................................
-void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5, int16_t x_dest, int16_t y_dest ){	
+void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5, int16_t x_dest, int16_t y_dest ){
     uint16_t row1_index;
 	uint16_t row2_index;
 	uint16_t row3_index;
@@ -609,7 +609,7 @@ void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t 
 	uint16_t row5_index;
 	uint16_t row6_index;
 	uint16_t row7_index;
-	
+
 	// COLUMN 1 --------------------------------------------------------------------------------------------------------------
 	row1_index = xy( x_dest+0, y_dest+0 ); mask[row1_index] = qadd8( mask[row1_index], bit_table[bitRead( bitmap_col_1,0 )] );
 	row2_index = xy( x_dest+0, y_dest+1 ); mask[row2_index] = qadd8( mask[row2_index], bit_table[bitRead( bitmap_col_1,1 )] );
@@ -618,7 +618,7 @@ void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t 
 	row5_index = xy( x_dest+0, y_dest+4 ); mask[row5_index] = qadd8( mask[row5_index], bit_table[bitRead( bitmap_col_1,4 )] );
 	row6_index = xy( x_dest+0, y_dest+5 ); mask[row6_index] = qadd8( mask[row6_index], bit_table[bitRead( bitmap_col_1,5 )] );
 	row7_index = xy( x_dest+0, y_dest+6 ); mask[row7_index] = qadd8( mask[row7_index], bit_table[bitRead( bitmap_col_1,6 )] );
-	
+
 	// COLUMN 2 --------------------------------------------------------------------------------------------------------------
 	row1_index = xy( x_dest+1, y_dest+0 ); mask[row1_index] = qadd8( mask[row1_index], bit_table[bitRead( bitmap_col_2,0 )] );
 	row2_index = xy( x_dest+1, y_dest+1 ); mask[row2_index] = qadd8( mask[row2_index], bit_table[bitRead( bitmap_col_2,1 )] );
@@ -627,7 +627,7 @@ void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t 
 	row5_index = xy( x_dest+1, y_dest+4 ); mask[row5_index] = qadd8( mask[row5_index], bit_table[bitRead( bitmap_col_2,4 )] );
 	row6_index = xy( x_dest+1, y_dest+5 ); mask[row6_index] = qadd8( mask[row6_index], bit_table[bitRead( bitmap_col_2,5 )] );
 	row7_index = xy( x_dest+1, y_dest+6 ); mask[row7_index] = qadd8( mask[row7_index], bit_table[bitRead( bitmap_col_2,6 )] );
-	
+
 	// COLUMN 3 --------------------------------------------------------------------------------------------------------------
 	row1_index = xy( x_dest+2, y_dest+0 ); mask[row1_index] = qadd8( mask[row1_index], bit_table[bitRead( bitmap_col_3,0 )] );
 	row2_index = xy( x_dest+2, y_dest+1 ); mask[row2_index] = qadd8( mask[row2_index], bit_table[bitRead( bitmap_col_3,1 )] );
@@ -636,7 +636,7 @@ void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t 
 	row5_index = xy( x_dest+2, y_dest+4 ); mask[row5_index] = qadd8( mask[row5_index], bit_table[bitRead( bitmap_col_3,4 )] );
 	row6_index = xy( x_dest+2, y_dest+5 ); mask[row6_index] = qadd8( mask[row6_index], bit_table[bitRead( bitmap_col_3,5 )] );
 	row7_index = xy( x_dest+2, y_dest+6 ); mask[row7_index] = qadd8( mask[row7_index], bit_table[bitRead( bitmap_col_3,6 )] );
-	
+
 	// COLUMN 4 --------------------------------------------------------------------------------------------------------------
 	row1_index = xy( x_dest+3, y_dest+0 ); mask[row1_index] = qadd8( mask[row1_index], bit_table[bitRead( bitmap_col_4,0 )] );
 	row2_index = xy( x_dest+3, y_dest+1 ); mask[row2_index] = qadd8( mask[row2_index], bit_table[bitRead( bitmap_col_4,1 )] );
@@ -645,7 +645,7 @@ void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t 
 	row5_index = xy( x_dest+3, y_dest+4 ); mask[row5_index] = qadd8( mask[row5_index], bit_table[bitRead( bitmap_col_4,4 )] );
 	row6_index = xy( x_dest+3, y_dest+5 ); mask[row6_index] = qadd8( mask[row6_index], bit_table[bitRead( bitmap_col_4,5 )] );
 	row7_index = xy( x_dest+3, y_dest+6 ); mask[row7_index] = qadd8( mask[row7_index], bit_table[bitRead( bitmap_col_4,6 )] );
-	
+
 	// COLUMN 5 --------------------------------------------------------------------------------------------------------------
 	row1_index = xy( x_dest+4, y_dest+0 ); mask[row1_index] = qadd8( mask[row1_index], bit_table[bitRead( bitmap_col_5,0 )] );
 	row2_index = xy( x_dest+4, y_dest+1 ); mask[row2_index] = qadd8( mask[row2_index], bit_table[bitRead( bitmap_col_5,1 )] );
@@ -661,14 +661,14 @@ void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t 
     @brief
     Writes a bitmap to a specified X and Y cursor position, taking five uint8_t
     as input for the column data.
-    
+
     @details
     Example:
 
         pix.write( B00101111, B01001001, B01001001, B01001001, B00110001 );
-        
+
             OR, WRITTEN VERTICALLY:
-        
+
         pix.write(   ,   ,   ,   ,   );
                    1   1   1   1   1  LSB
                    1   0   0   0   0
@@ -676,13 +676,13 @@ void PixieChroma::add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t 
                    1   1   1   1   0
                    0   0   0   0   1
                    1   0   0   0   1
-                   0   1   1   1   0  
+                   0   1   1   1   0
                    0   0   0   0   0  MSB (unused)
                    B   B   B   B   B
-    
+
     This writes a "5" to the display, seen above in the "1" bits of each column.
     The MSB (highest bit) is not used in bitmaps.
-    
+
     @param  bitmap_col_1  Column 1 data of this bitmap
     @param  bitmap_col_2  Column 2 data of this bitmap
     @param  bitmap_col_3  Column 3 data of this bitmap
@@ -699,7 +699,7 @@ void PixieChroma::write( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bit
 /*! ############################################################################
     @brief
     Writes a char* string to a specified X and Y cursor position.
-    
+
     @param  message  char* string to write
     @param  x_pos    X cursor position of write **[optional]**
     @param  y_pos    Y cursor position of write **[optional]**
@@ -716,7 +716,7 @@ void PixieChroma::write( char* message, uint8_t x_pos, uint8_t y_pos ){
 /*! ############################################################################
     @brief
     Writes a signed 16-bit integer to a specified X and Y cursor position.
-    
+
     @param  input  Signed integer to write
     @param  x_pos  X cursor position of write **[optional]**
     @param  y_pos  Y cursor position of write **[optional]**
@@ -736,7 +736,7 @@ void PixieChroma::write( int16_t input, uint8_t x_pos, uint8_t y_pos ){
 /*! ############################################################################
     @brief
     Writes an unsigned 16-bit integer to a specified X and Y cursor position.
-    
+
     @param  input  Unsigned integer to write
     @param  x_pos  X cursor position of write **[optional]**
     @param  y_pos  Y cursor position of write **[optional]**
@@ -756,7 +756,7 @@ void PixieChroma::write( uint16_t input, uint8_t x_pos, uint8_t y_pos ){
 /*! ############################################################################
     @brief
     Writes a signed 32-bit integer to a specified X and Y cursor position.
-    
+
     @param  input  Signed integer to write
     @param  x_pos  X cursor position of write **[optional]**
     @param  y_pos  Y cursor position of write **[optional]**
@@ -776,7 +776,7 @@ void PixieChroma::write( int32_t input, uint8_t x_pos, uint8_t y_pos ){
 /*! ############################################################################
     @brief
     Writes an unsigned 32-bit integer to a specified X and Y cursor position.
-    
+
     @param  input  Unsigned integer to write
     @param  x_pos  X cursor position of write **[optional]**
     @param  y_pos  Y cursor position of write **[optional]**
@@ -797,7 +797,7 @@ void PixieChroma::write( uint32_t input, uint8_t x_pos, uint8_t y_pos ){
     @brief
     Writes an unsigned 32-bit integer to a specified X and Y cursor position.
     ( Stupid ESP-specific type )
-    
+
     @param  input  Unsigned integer to write
     @param  x_pos  X cursor position of write **[optional]**
     @param  y_pos  Y cursor position of write **[optional]**
@@ -820,7 +820,7 @@ void PixieChroma::write( long unsigned int input, uint8_t x_pos, uint8_t y_pos )
     @brief
     Writes a single-precision floating point value to a specified X and Y cursor
     position, to a specified number of decimal places.
-    
+
     @param  input   Single-precision float to write
     @param  places  Number of decimal places to show **[optional]**
     @param  x_pos   X cursor position of write **[optional]**
@@ -840,7 +840,7 @@ void PixieChroma::write( float input, uint8_t places, uint8_t x_pos, uint8_t y_p
     @brief
     Writes a double-precision floating point value to a specified X and Y cursor
     position, to a specified number of decimal places.
-    
+
     @param  input   Double-precision float to write
     @param  places  Number of decimal places to show **[optional]**
     @param  x_pos   X cursor position of write **[optional]**
@@ -861,13 +861,13 @@ void PixieChroma::write( double input, uint8_t places, uint8_t x_pos, uint8_t y_
 /*! ############################################################################
     @brief
     Internal function for rendering char* strings to the mask buffer.
-    
+
     @details
     All other write() function overloads eventually end up casted to char*
     strings and passed to this function for rendering. This can also be used to
     write char* strings that are not aligned to whole display positions, such
     as during smooth scrolling.
-    
+
     @param  message  char* of text to render
     @param  x_dest   X pixel position of write **[optional]**
     @param  y_dest   Y pixel position of write **[optional]**
@@ -875,9 +875,9 @@ void PixieChroma::write( double input, uint8_t places, uint8_t x_pos, uint8_t y_
 void PixieChroma::write_pix( char* message, int16_t x_dest, int16_t y_dest ){
 	int16_t offset_x = 0;
 	int16_t offset_y = 0;
-	
+
 	just_wrapped = false;
-	
+
     uint8_t len = strlen( message );
     for( uint8_t i = 0; i < len; i++ ){
         if( message[i] == '\n' ){ // Newline, force line break
@@ -891,18 +891,18 @@ void PixieChroma::write_pix( char* message, int16_t x_dest, int16_t y_dest ){
 				offset_y = display_height;
 			}
         }
-        else if( line_wrap == true && x_dest+offset_x+display_width >= (matrix_width) ){ // End of line reached, wrap to new line if line_wrap enabled		
+        else if( line_wrap == true && x_dest+offset_x+display_width >= (matrix_width) ){ // End of line reached, wrap to new line if line_wrap enabled
 			add_char(
                 message[i],
                 x_dest + offset_x,
                 y_dest + offset_y
             );
             offset_x += display_width;
-			
+
             x_dest = extra_space_left+display_padding_x;
 			offset_x = 0;
 			offset_y = display_height;
-			
+
 			just_wrapped = true;
         }
         else if( message[i] == 0 || message[i] == '\0' ){ // end of string
@@ -917,7 +917,7 @@ void PixieChroma::write_pix( char* message, int16_t x_dest, int16_t y_dest ){
             offset_x += display_width;
         }
     }
-	
+
 	cursor_x_temp = x_dest+offset_x;
 	cursor_y_temp = y_dest+offset_y;
 }
@@ -926,11 +926,11 @@ void PixieChroma::write_pix( char* message, int16_t x_dest, int16_t y_dest ){
 /*! ############################################################################
     @brief
     Internal function for rendering bitmaps to the mask buffer.
-    
+
     @details
     This can also be used to write bitmaps that are not aligned to whole display
     positions, such as during smooth scrolling.
-    
+
     @param  bitmap_col_1  Column 1 data of this bitmap
     @param  bitmap_col_2  Column 2 data of this bitmap
     @param  bitmap_col_3  Column 3 data of this bitmap
@@ -939,16 +939,16 @@ void PixieChroma::write_pix( char* message, int16_t x_dest, int16_t y_dest ){
     @param  x_dest        X pixel position of write **[optional]**
     @param  y_dest        Y pixel position of write **[optional]**
 *///............................................................................
-void PixieChroma::write_pix( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5, int16_t x_dest, int16_t y_dest ){	
+void PixieChroma::write_pix( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5, int16_t x_dest, int16_t y_dest ){
     int16_t offset_x = 0;
 	int16_t offset_y = 0;
-		
+
 	if( line_wrap == true && x_dest+offset_x >= ( display_width * chars_x ) ){ // End of line reached, wrap to new line if line_wrap enabled
 		x_dest = display_padding_x;
 		offset_x = 0;
-		offset_y = display_height;	
+		offset_y = display_height;
 	}
-	
+
 	add_char(
 		bitmap_col_1,
 		bitmap_col_2,
@@ -960,7 +960,7 @@ void PixieChroma::write_pix( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t
 	);
 	offset_x += display_width;
 
-	
+
 	cursor_x_temp = x_dest+offset_x;
 	cursor_y_temp = y_dest+offset_y;
 }
@@ -974,14 +974,14 @@ void PixieChroma::write_pix( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t
     @brief
     Prints a bitmap to the displays at the current cursor position, taking five
     uint8_t as input for the column data.
-    
+
     @details
     Example:
 
         pix.print( B00101111, B01001001, B01001001, B01001001, B00110001 );
-        
+
             OR, WRITTEN VERTICALLY:
-        
+
         pix.print(    ,   ,   ,   ,    );
                     1   1   1   1   1  LSB
                     1   0   0   0   0
@@ -989,13 +989,13 @@ void PixieChroma::write_pix( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t
                     1   1   1   1   0
                     0   0   0   0   1
                     1   0   0   0   1
-                    0   1   1   1   0  
+                    0   1   1   1   0
                     0   0   0   0   0  MSB ( unused )
                     B   B   B   B   B
-        
+
     This writes a "5" to the display, seen above in the "1" bits of
     each column. The MSB ( highest bit ) is not used in bitmaps.
-              
+
     @param  bitmap_col_1  Column 1 data of this bitmap
     @param  bitmap_col_2  Column 2 data of this bitmap
     @param  bitmap_col_3  Column 3 data of this bitmap
@@ -1005,9 +1005,9 @@ void PixieChroma::write_pix( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t
 void PixieChroma::print( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5 ){
 	cursor_x_temp = cursor_x;
 	cursor_y_temp = cursor_y;
-	
+
     write_pix( bitmap_col_1, bitmap_col_2, bitmap_col_3, bitmap_col_4, bitmap_col_5, cursor_x, cursor_y );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1017,17 +1017,17 @@ void PixieChroma::print( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bit
 /*! ############################################################################
     @brief
     Prints a single char to the displays at the current cursor position.
-    
+
     @param  chr  char to print
 *///............................................................................
-void PixieChroma::print( char chr ){
+void PixieChroma::print( const char chr ){
 	if(chr != '\n'){
 		add_char(
 			chr,
 			cursor_x,
 			cursor_y
 		);
-		
+
 		cursor_x += display_width;
 
 		if(line_wrap && cursor_x >= ( display_width * chars_x )	){
@@ -1051,17 +1051,17 @@ void PixieChroma::print( char chr ){
 /*! ############################################################################
     @brief
     Prints a char* string to the displays at the current cursor position.
-    
+
     The given string will be searched for "Shortcodes", which are special
     strings which will automatically be replaced with bitmap icons such as:
-    
+
     `print("SMILEY FACE! [:SMILE:]");`
-    
+
     A full list of Shortcodes can be found in pixie_shortcodes.h.
-    
-    @param  message  char* string to print
+
+    @param  message  const char* string to print
 *///............................................................................
-void PixieChroma::print( char* message ){
+void PixieChroma::print( const char* message ){
 	uint16_t len = strlen(message);
 	uint16_t i = 0;
 	while (i < len - 1) {
@@ -1088,16 +1088,16 @@ void PixieChroma::print( char* message ){
 
 /*! ############################################################################
     @brief
-    Prints a signed 16-bit integer to the displays at the current cursor 
+    Prints a signed 16-bit integer to the displays at the current cursor
     position.
-    
+
     @param  input  Signed integer to print
 *///............................................................................
 void PixieChroma::print( int16_t input ){
     char char_buf[32];
     itoa( input, char_buf, 10 );
     write_pix( char_buf, cursor_x, cursor_y );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1108,14 +1108,14 @@ void PixieChroma::print( int16_t input ){
     @brief
     Prints an unsigned 16-bit integer to the displays at the current cursor
     position.
-    
+
     @param  input  Unsigned integer to print
 *///............................................................................
 void PixieChroma::print( uint16_t input ){
     char char_buf[32];
     utoa( input, char_buf, 10 );
     write_pix( char_buf, cursor_x, cursor_y );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1126,14 +1126,14 @@ void PixieChroma::print( uint16_t input ){
     @brief
     Prints a signed 32-bit integer to the displays at the current cursor
     position.
-    
+
     @param  input  Signed integer to print
 *///............................................................................
 void PixieChroma::print( int32_t input ){
     char char_buf[32];
     ltoa( input, char_buf, 10 );
     write_pix( char_buf, cursor_x, cursor_y );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1144,14 +1144,14 @@ void PixieChroma::print( int32_t input ){
     @brief
     Prints an unsigned 32-bit integer to the displays at the current cursor\
     position.
-    
+
     @param  input  Unsigned integer to print
 *///............................................................................
 void PixieChroma::print( uint32_t input ){
     char char_buf[32];
     ultoa( input, char_buf, 10 );
     write_pix( char_buf, cursor_x, cursor_y );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1162,7 +1162,7 @@ void PixieChroma::print( uint32_t input ){
     @brief
     Prints an unsigned 32-bit integer to the displays at the current cursor
     position. ( Dumb ESP-specific type )
-    
+
     @param  input  Unsigned integer to print
 *///............................................................................
 #ifndef ARDUINO_ARCH_TEENSY_3_X
@@ -1170,7 +1170,7 @@ void PixieChroma::print( long unsigned int input ){
     char char_buf[32];
     ultoa( input, char_buf, 10 );
     write_pix( char_buf, cursor_x, cursor_y );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1182,13 +1182,13 @@ void PixieChroma::print( long unsigned int input ){
     @brief
     Prints a single-precision floating point value to the displays at the
     current cursor position, to a specified number of decimal places.
-    
+
     @param  input   float to print
     @param  places  Number of decimal places to print **[optional]**
 *///............................................................................
 void PixieChroma::print( float input, uint8_t places ){
     print( double( input ), places );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1199,7 +1199,7 @@ void PixieChroma::print( float input, uint8_t places ){
     @brief
     Prints a double-precision floating point value to the displays at the
     current cursor position, to a specified number of decimal places.
-    
+
     @param  input   double to print
     @param  places  Number of decimal places to print **[optional]**
 *///............................................................................
@@ -1207,7 +1207,7 @@ void PixieChroma::print( double input, uint8_t places ){
     char char_buf[32];
     dtoa( input, char_buf, places );
     write_pix( char_buf, cursor_x, cursor_y );
-	
+
 	// Store cursor changes
 	cursor_x = cursor_x_temp;
 	cursor_y = cursor_y_temp;
@@ -1223,14 +1223,14 @@ void PixieChroma::print( double input, uint8_t places ){
     Prints a bitmap to the displays at the current cursor position, (taking five
     uint8_t as input for the column data) then jumps to the next row in the
     Pixie display, similar to a newline '\\n' character.
-    
+
     @param  bitmap_col_1  Column 1 data of this bitmap
     @param  bitmap_col_2  Column 2 data of this bitmap
     @param  bitmap_col_3  Column 3 data of this bitmap
     @param  bitmap_col_4  Column 4 data of this bitmap
     @param  bitmap_col_5  Column 5 data of this bitmap
 *///............................................................................
-void PixieChroma::println( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5 ){	
+void PixieChroma::println( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5 ){
 	print( bitmap_col_1, bitmap_col_2, bitmap_col_3, bitmap_col_4, bitmap_col_5 );
 	print('\n');
 }
@@ -1241,18 +1241,18 @@ void PixieChroma::println( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t b
     Prints a char* string to the displays at the current cursor position, then
     jumps to the next row in the Pixie display, similar to a newline '\\n'
     character.
-    
+
     The given string will be searched for "Shortcodes", which are special
     strings which will automatically be replaced with bitmap icons such as:
-    
+
     `print("SMILEY FACE! [:SMILE:]");`
-    
+
     A full list of Shortcodes can be found in pixie_shortcodes.h.
-    
+
     @param  message  char* string to print
 *///............................................................................
 void PixieChroma::println( char* message ){
-	print(message);	
+	print(message);
 	print('\n');
 }
 
@@ -1262,7 +1262,7 @@ void PixieChroma::println( char* message ){
     Prints a signed 16-bit integer to the displays at the current cursor
     position, then jumps to the next row in the Pixie display, similar to a
     newline '\\n' character.
-    
+
     @param  input  Signed 16-bit integer to print
 *///............................................................................
 void PixieChroma::println( int16_t input ){
@@ -1276,7 +1276,7 @@ void PixieChroma::println( int16_t input ){
     Prints an unsigned 16-bit integer to the displays at the current cursor
     position, then jumps to the next row in the Pixie display, similar to a
     newline '\\n' character.
-    
+
     @param  input  Unsigned 16-bit integer to print
 *///............................................................................
 void PixieChroma::println( uint16_t input ){
@@ -1290,7 +1290,7 @@ void PixieChroma::println( uint16_t input ){
     Prints a signed 32-bit integer to the displays at the current cursor
     position, then jumps to the next row in the Pixie display, similar to a
     newline '\\n' character.
-    
+
     @param  input  Signed 32-bit integer to print
 *///............................................................................
 void PixieChroma::println( int32_t input ){
@@ -1304,7 +1304,7 @@ void PixieChroma::println( int32_t input ){
     Prints an unsigned 32-bit integer to the displays at the current cursor
     position, then jumps to the next row in the Pixie display, similar to a
     newline '\\n' character.
-    
+
     @param  input  Unsigned 32-bit integer to print
 *///............................................................................
 void PixieChroma::println( uint32_t input ){
@@ -1318,7 +1318,7 @@ void PixieChroma::println( uint32_t input ){
     Prints an unsigned 32-bit integer to the displays at the current cursor
     position, then jumps to the next row in the Pixie display, similar to a
     newline '\\n' character. ( Stupid ESP-specific type )
-    
+
     @param  input  Unsigned 32-bit integer to print
 *///............................................................................
 #ifndef ARDUINO_ARCH_TEENSY_3_X
@@ -1350,7 +1350,7 @@ void PixieChroma::println( float input, uint8_t places ){
     current cursor position (to a specified number of decimal places), then
     jumps to the next row in the Pixie display, similar to a newline '\\n'
     character.
-            
+
     @param  input   double to print
     @param  places  Number of decimal places to print **[optional]**
 *///............................................................................
@@ -1367,10 +1367,10 @@ void PixieChroma::println( double input, uint8_t places ){
 /*! ############################################################################
     @brief
     Returns the cursor's X position
-    
+
     @return  The cursor's X position
 *///............................................................................
-uint8_t PixieChroma::get_cursor_x(){	
+uint8_t PixieChroma::get_cursor_x(){
     return cursor_x / display_width;
 }
 
@@ -1378,7 +1378,7 @@ uint8_t PixieChroma::get_cursor_x(){
 /*! ############################################################################
     @brief
     Returns the cursor's X position in exact pixel coordinates
-    
+
     @return  The cursor's X position in exact pixel coordinates
 *///............................................................................
 int16_t PixieChroma::get_cursor_x_exact(){
@@ -1389,7 +1389,7 @@ int16_t PixieChroma::get_cursor_x_exact(){
 /*! ############################################################################
     @brief
     Returns the cursor's Y position
-    
+
     @return  The cursor's Y position
 *///............................................................................
 uint8_t PixieChroma::get_cursor_y(){
@@ -1400,7 +1400,7 @@ uint8_t PixieChroma::get_cursor_y(){
 /*! ############################################################################
     @brief
     Returns the cursor's Y position in exact pixel coordinates
-    
+
     @return  The cursor's Y position in exact pixel coordinates
 *///............................................................................
 int16_t PixieChroma::get_cursor_y_exact(){
@@ -1411,8 +1411,8 @@ int16_t PixieChroma::get_cursor_y_exact(){
 /*! ############################################################################
     @brief
     Sets the cursor position in a 2D context, in whole displays.
-    
-    @details  
+
+    @details
     Wherever the cursor is, is where the next call to print() or write() will
     originate. Position is counted from zero. Remember: each Pixie Chroma has
     two "displays" on it.
@@ -1488,7 +1488,7 @@ void PixieChroma::free(){
     @brief
     Freezes the current mask buffer in memory to prevent showing unfinished text
     if show() automaticall fires during construction of the current display data.
-    
+
     Use free() to unfreeze.
 *///............................................................................
 void PixieChroma::hold(){
@@ -1500,7 +1500,7 @@ void PixieChroma::hold(){
     @brief
     Processes 1D image data into truncated versions, sending them to the Pixie
     Chroma displays.
-            
+
     @details
     FastLED.show() is called here!
 *///............................................................................
@@ -1510,11 +1510,11 @@ void PixieChroma::show(){
     frame_rate = 1000000.0 / frame_delta_us;
     delta = fps_target / frame_rate;
     t_last = t_now;
-    
+
     anim_func( this, delta ); // Call custom animation function
-    
-    noInterrupts(); 
-	
+
+    noInterrupts();
+
 	for(uint8_t i = 0; i < chars_y; i++){
 		if(scrolling[i] == false){
 			int16_t x_offset = calc_justification(justifications[i], i);
@@ -1524,17 +1524,17 @@ void PixieChroma::show(){
 			}
 		}
 	}
-    
+
     if( !freeze ){ // If we're not holding out for a pix.free() call, show with the current mask
         memcpy( mask_out, mask, led_count );
     }
-	
+
     memcpy( color_map_out, color_map, sizeof( CRGB )*led_count );
 
     for( uint16_t i = 0; i < led_count; i++ ){
         // MASKING
         color_map_out[i].fadeLightBy( 255-mask_out[i] ); // Apply mask "over" LED color layer
-        
+
         // GAMMA CORRECTION
         if( correct_gamma ){
             color_map_out[i].r = gamma8[ color_map_out[i].r ]; // Apply gamma correction LUT
@@ -1542,7 +1542,7 @@ void PixieChroma::show(){
             color_map_out[i].b = gamma8[ color_map_out[i].b ];
         }
     }
-        
+
     // Regulate brightness to keep power within budget set with pix.set_max_power( V, mA );
     FastLED.setBrightness( calculate_max_brightness_for_power_vmA( color_map_out, led_count, brightness_level, max_V, max_mA ) );
     FastLED.show();
@@ -1555,7 +1555,7 @@ void PixieChroma::show(){
     Custom delay() function from FastLED that allows automatic refreshing of the
 	displays during a delay() call, allowing things like temporal dithering to
 	continue to function properly while the microcontroller waits.
-	
+
 	@param  milliseconds  Number of milliseconds to wait
 *///............................................................................
 void PixieChroma::delay(uint32_t milliseconds){
@@ -1569,14 +1569,14 @@ void PixieChroma::delay(uint32_t milliseconds){
 /*! ############################################################################
     @brief
     Sets the entire color buffer to a CRGB value.
-    
+
     @details
     Example:
-    
+
         pix.color( CRGB( 0,255,255 ) );
-    
+
     This would set all displays to cyan, a mix of green and blue.
-              
+
     @param  col  FastLED CRGB color
 *///............................................................................
 void PixieChroma::color( CRGB col ){
@@ -1588,15 +1588,15 @@ void PixieChroma::color( CRGB col ){
 /*! ############################################################################
     @brief
     Sets a specific display in the color buffer to a CRGB value.
-              
+
     @details
     Example:
-    
+
         pix.color( CRGB( 0,255,255 ), 1, 0 );
-    
+
     This would set the **second display of the first row** to cyan, a mix of
     green and blue.
-              
+
     @param  col  FastLED CRGB color
     @param  x    X coordinate of display
     @param  y    y coordinate of display
@@ -1604,7 +1604,7 @@ void PixieChroma::color( CRGB col ){
 void PixieChroma::color( CRGB col, uint8_t x, uint8_t y ){
     int16_t x_pos = x * display_width  + display_padding_x;
     int16_t y_pos = y * display_height + display_padding_y;
-    
+
     for( uint8_t xi = 0; xi < font_col_width; xi++ ){
         color_map[xy( x_pos+xi, y_pos+0 )] = col;
         color_map[xy( x_pos+xi, y_pos+1 )] = col;
@@ -1620,15 +1620,15 @@ void PixieChroma::color( CRGB col, uint8_t x, uint8_t y ){
 /*! ############################################################################
     @brief
     Sets a rectangular area in the color buffer to a CRGB value.
-              
+
     @details
     Example:
-    
+
         pix.color( CRGB( 0,255,255 ), 0, 0, 5, 5 );
-    
+
     This would set **the first five columns and rows** of the color buffer to
     cyan, a mix of green and blue.
-              
+
     @param    col  FastLED CRGB color
     @param    x1   Starting X coordinate of the rectangle
     @param    y1   Starting Y coordinate of the rectangle
@@ -1650,10 +1650,10 @@ void PixieChroma::color( CRGB col, int16_t x1, int16_t y1, int16_t x2, int16_t y
 		y2 = y1;
 		y1 = y_temp;
 	}
-    
+
     uint16_t x_delta = x2 - x1;
     uint16_t y_delta = y2 - y1;
-    
+
     for( uint16_t y = 0; y < y_delta; y++ ){
         for( uint16_t x = 0; x < x_delta; x++ ){
             int16_t x2_pos = x1 + x;
@@ -1667,12 +1667,12 @@ void PixieChroma::color( CRGB col, int16_t x1, int16_t y1, int16_t x2, int16_t y
 /*! ############################################################################
     @brief
     All print() calls after a print_color() will be colored with this value.
-	
+
 	    print_color( CRGB::Red );
 		print("Hello "); // ..........Printed in red
 		print_color( CRGB::Green );
 		print("World!"); // ..........Printed in green
-              
+
     @param  col  FastLED CRGB color
 *///............................................................................
 void PixieChroma::print_color( CRGB col ){
@@ -1684,12 +1684,12 @@ void PixieChroma::print_color( CRGB col ){
     @brief
     Approximates the conversion of a blackbody radiation temperature (i.e.
     3500K) to a CRGB color object.
-    
+
     @details
     This can be used within other Pixie color functions like so:
-    
+
         pix.color(  kelvin_to_rgb(  3000  )  );
-              
+
     This would render a warm-white color. This measurement system is often used
     in household LED bulbs, with colors like:
 
@@ -1710,7 +1710,7 @@ CRGB PixieChroma::kelvin_to_rgb( uint16_t temperature ){
 
     _temperature = constrain( temperature, 0, 65500 );
 
-    _red = _green = _blue = 0;  
+    _red = _green = _blue = 0;
     float t = _temperature * 0.01;
 
     if ( t <= 66 ){
@@ -1758,7 +1758,7 @@ void PixieChroma::blur( fract8 blur_amount ){
 /*! ############################################################################
     @brief
     Blurs the mask buffer in the X axis by blur_amount.
-            
+
     @param  blur_amount   Amount to blur
 *///............................................................................
 void PixieChroma::blur_x( fract8 blur_amount ){
@@ -1785,7 +1785,7 @@ void PixieChroma::blur_x( fract8 blur_amount ){
 /*! ############################################################################
     @brief
     Blurs the mask buffer in the Y axis by blur_amount.
-            
+
     @param  blur_amount  Amount to blur
 *///............................................................................
 void PixieChroma::blur_y( fract8 blur_amount ){
@@ -1794,7 +1794,7 @@ void PixieChroma::blur_y( fract8 blur_amount ){
     uint8_t seep = blur_amount >> 1;
     for(  uint8_t col = 0; col < matrix_width; ++col ) {
         uint8_t carryover = 0;
-        for(  uint8_t i = 0; i < matrix_height; ++i ) {            
+        for(  uint8_t i = 0; i < matrix_height; ++i ) {
             uint8_t cur = mask[xy( col,i )];
             uint8_t part = cur;
             part = scale8( part, seep );
@@ -1814,7 +1814,7 @@ void PixieChroma::blur_y( fract8 blur_amount ){
     @brief
     Darkens the mask buffer by an 8-bit amount. Optionally resets the cursor
     position.
-            
+
     @param  amount        8-bit amount to darken the mask
     @param  reset_cursor  Reset the cursor to 0,0 **(Default: false)**
 *///............................................................................
@@ -1822,7 +1822,7 @@ void PixieChroma::dim( uint8_t amount, bool reset_cursor ){
     if( reset_cursor == true ){
         set_cursor( 0,0 );
     }
-    
+
     for( uint16_t i = 0; i < pixel_count; i+=11 ){
         mask[i+0]  = scale8( mask[i+0],  255-amount );
         mask[i+1]  = scale8( mask[i+1],  255-amount );
@@ -1846,7 +1846,7 @@ void PixieChroma::dim( uint8_t amount, bool reset_cursor ){
 /*! ############################################################################
     @brief
     Blurs the color buffer in both axes by blur_amount.
-            
+
     @param  blur_amount  Amount to blur
 *///............................................................................
 void PixieChroma::color_blur( fract8 blur_amount ){
@@ -1858,14 +1858,14 @@ void PixieChroma::color_blur( fract8 blur_amount ){
 /*! ############################################################################
     @brief
     Blurs the color buffer in the X axis by blur_amount.
-            
+
     @param  blur_amount  Amount to blur
 *///............................................................................
 void PixieChroma::color_blur_x( fract8 blur_amount ){
     uint8_t keep = 255 - blur_amount;
     uint8_t seep = blur_amount >> 1;
     for(  uint8_t row = 0; row < matrix_height; row++ ) {
-        uint8_t carryover = 0;
+        CRGB carryover = CRGB::Black;
         for(  uint8_t i = 0; i < matrix_width; i++ ) {
             CRGB cur = color_map[xy( i,row )];
             CRGB part = cur;
@@ -1883,7 +1883,7 @@ void PixieChroma::color_blur_x( fract8 blur_amount ){
 /*! ############################################################################
     @brief
     Blurs the color buffer in the Y axis by blur_amount.
-            
+
     @param  blur_amount  Amount to blur
 *///............................................................................
 void PixieChroma::color_blur_y( fract8 blur_amount ){
@@ -1909,7 +1909,7 @@ void PixieChroma::color_blur_y( fract8 blur_amount ){
 /*! ############################################################################
     @brief
     Darkens the color buffer by an 8-bit amount.
-            
+
     @param  amount  8-bit amount to darken the mask
 *///............................................................................
 void PixieChroma::color_dim( uint8_t amount ){
@@ -1925,7 +1925,7 @@ void PixieChroma::color_dim( uint8_t amount ){
 /*! ############################################################################
     @brief
     Draws a line in the color map using Bresenham's line algorithm.
-        
+
     @param  x1     Starting X coordinate of the line
     @param  y1     Starting Y coordinate of the line
     @param  x2     Ending X coordinate of the line (inclusive)
@@ -1935,7 +1935,7 @@ void PixieChroma::color_dim( uint8_t amount ){
 void PixieChroma::draw_line_color( int16_t x1, int16_t y1, int16_t x2, int16_t y2, CRGB color ){
     //Bresenham's line algorithm
     uint16_t index;
-    
+
     int16_t x,y,dx,dy,dx1,dy1,px,py,xe,ye,i;
     dx=x2-x1;
     dy=y2-y1;
@@ -2007,7 +2007,7 @@ void PixieChroma::draw_line_color( int16_t x1, int16_t y1, int16_t x2, int16_t y
 /*! ############################################################################
     @brief
     Draws a line in the mask buffer using Bresenham's line algorithm.
-        
+
     @param  x1     Starting X coordinate of the line
     @param  y1     Starting Y coordinate of the line
     @param  x2     Ending X coordinate of the line (inclusive)
@@ -2017,7 +2017,7 @@ void PixieChroma::draw_line_color( int16_t x1, int16_t y1, int16_t x2, int16_t y
 void PixieChroma::draw_line_mask( int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t value ){
     //Bresenham's line algorithm
     uint16_t index;
-    
+
     int16_t x,y,dx,dy,dx1,dy1,px,py,xe,ye,i;
     dx=x2-x1;
     dy=y2-y1;
@@ -2089,7 +2089,7 @@ void PixieChroma::draw_line_mask( int16_t x1, int16_t y1, int16_t x2, int16_t y2
 /*! ############################################################################
     @brief
 	Returns the X-axis UV coordinate for a given X-axis pixel position
-    
+
     @param   x_pixel  X-axis pixel position
     @return  X-axis UV coordinate
 *///............................................................................
@@ -2101,7 +2101,7 @@ float PixieChroma::get_uv_x( int32_t x_pixel ){
 /*! ############################################################################
     @brief
 	Returns the Y-axis UV coordinate for a given Y-axis pixel position
-    
+
     @param   y_pixel  Y-axis pixel position
     @return  Y-axis UV coordinate
 *///............................................................................
@@ -2114,7 +2114,7 @@ float PixieChroma::get_uv_y( int32_t y_pixel ){
 /*! ############################################################################
     @brief
     Gets the mask value at a given pixel coordinate.
-        
+
     @param   x  X pixel coordinate
     @param   y  Y pixel coordinate
 	@return  Mask value
@@ -2127,7 +2127,7 @@ uint8_t PixieChroma::get_pixel_mask( int32_t x, int32_t y ){
 /*! ############################################################################
     @brief
     Gets the RGB color value at a given pixel coordinate.
-        
+
     @param   x  X pixel coordinate
     @param   y  Y pixel coordinate
 	@return  CRGB color
@@ -2141,41 +2141,41 @@ CRGB PixieChroma::get_pixel_color( int32_t x, int32_t y ){
     @brief
     Prints the index table for the calculated XY map. **Requires Serial.begin()
     first to function.**
-    
+
     @details
     Useful for debugging, the index table (XY Map) can be printed over Serial.
     Each cell of the table denotes at what index that physical pixel location is
     inside of the 1D color_map / mask arrays. (The xy() function uses this table
     to translate real-world 2D coordinates to 1D indices.)
-    
+
     For example, here is the XY Table for a single Pixie:
-    
+
     |       |        |        |        |        |        |       |       |        |        |        |        |        |       |
     |-------|--------|--------|--------|--------|--------|-------|-------|--------|--------|--------|--------|--------|-------|
     | *70*  | *71*   | *72*   | *73*   | *74*   | *75*   | *76*  | *77*  | *78*   | *79*   | *80*   | *81*   | *82*   | *83*  |
-    | *84*  | *85*   | *86*   | *87*   | *88*   | *89*   | *90*  | *91*  | *92*   | *93*   | *94*   | *95*   | *96*   | *97*  | 
-    | *98*  | **0**  | **1**  | **2**  | **3**  | **4**  | *99*  | *100* | **35** | **36** | **37** | **38** | **39** | *101* | 
-    | *102* | **5**  | **6**  | **7**  | **8**  | **9**  | *103* | *104* | **40** | **41** | **42** | **43** | **44** | *105* | 
-    | *106* | **10** | **11** | **12** | **13** | **14** | *107* | *108* | **45** | **46** | **47** | **48** | **49** | *109* | 
-    | *110* | **15** | **16** | **17** | **18** | **19** | *111* | *112* | **50** | **51** | **52** | **53** | **54** | *113* | 
-    | *114* | **20** | **21** | **22** | **23** | **24** | *115* | *116* | **55** | **56** | **57** | **58** | **59** | *117* | 
-    | *118* | **25** | **26** | **27** | **28** | **29** | *119* | *120* | **60** | **61** | **62** | **63** | **64** | *121* | 
-    | *122* | **30** | **31** | **32** | **33** | **34** | *123* | *124* | **65** | **66** | **67** | **68** | **69** | *125* | 
-    | *126* | *127*  | *128*  | *129*  | *130*  | *131*  | *132* | *133* | *134*  | *135*  | *136*  | *137*  | *138*  | *139* | 
+    | *84*  | *85*   | *86*   | *87*   | *88*   | *89*   | *90*  | *91*  | *92*   | *93*   | *94*   | *95*   | *96*   | *97*  |
+    | *98*  | **0**  | **1**  | **2**  | **3**  | **4**  | *99*  | *100* | **35** | **36** | **37** | **38** | **39** | *101* |
+    | *102* | **5**  | **6**  | **7**  | **8**  | **9**  | *103* | *104* | **40** | **41** | **42** | **43** | **44** | *105* |
+    | *106* | **10** | **11** | **12** | **13** | **14** | *107* | *108* | **45** | **46** | **47** | **48** | **49** | *109* |
+    | *110* | **15** | **16** | **17** | **18** | **19** | *111* | *112* | **50** | **51** | **52** | **53** | **54** | *113* |
+    | *114* | **20** | **21** | **22** | **23** | **24** | *115* | *116* | **55** | **56** | **57** | **58** | **59** | *117* |
+    | *118* | **25** | **26** | **27** | **28** | **29** | *119* | *120* | **60** | **61** | **62** | **63** | **64** | *121* |
+    | *122* | **30** | **31** | **32** | **33** | **34** | *123* | *124* | **65** | **66** | **67** | **68** | **69** | *125* |
+    | *126* | *127*  | *128*  | *129*  | *130*  | *131*  | *132* | *133* | *134*  | *135*  | *136*  | *137*  | *138*  | *139* |
     | *140* | *141*  | *142*  | *143*  | *144*  | *145*  | *146* | *147* | *148*  | *149*  | *150*  | *151*  | *152*  | *153* |
-    
+
     - **BOLD** = Visible Pixel
     - *ITALIC* = Invisible Pixel
-    
+
     Starting from `0` at the top-left with the first visible pixel, (of the first
     display in the XY Table) the index increases to `69`, (the last visible
     pixel in the matrix) before starting to count invisible pixels at index `70`
     and up through `153`.
-    
+
     With this example table setup, the first 70 indices of color_map / mask are
     visible pixels, and the remaining 84 are invisible. (Simulated margin between
     displays)
-    
+
 *///............................................................................
 void PixieChroma::print_xy_table(){
     for( uint8_t y = 0; y < matrix_height; y++ ){
@@ -2194,16 +2194,16 @@ void PixieChroma::print_xy_table(){
     Scrolls a message across the matrix by constructing it one character at a
 	time in the dead-space outside the visible area and scrolling it in from the
 	right.
-    
+
 	@param   message  Message to scroll across the matrix
 	@param   row      Row to scroll the message on (default 0)
 *///............................................................................
-void PixieChroma::scroll_message( char* message, uint8_t row ){	
+void PixieChroma::scroll_message( char* message, uint8_t row ){
 	scrolling[row] = true;
 
 	uint16_t len = strlen(message);
 	uint16_t i = 0;
-	while (i < len - 1) {	
+	while (i < len - 1) {
 		if (message[i] == '[' && message[i + 1] == ':') { // Found start of shortcode
 			for (uint16_t j = i; j < len - 1; j++) {
 				if (message[j] == ':' && message[j + 1] == ']') { // Found end of shortcode
@@ -2223,11 +2223,11 @@ void PixieChroma::scroll_message( char* message, uint8_t row ){
 	if(message[len-1] != ']'){ // If message doesn't end with shortcode
 		scroll_char(message[len-1], row);
 	}
-	
+
 	for(uint8_t i = 0; i < chars_x; i++){
 		scroll_char(' ', row);
 	}
-	
+
 	scrolling[row] = false;
 }
 
@@ -2235,7 +2235,7 @@ void PixieChroma::scroll_message( char* message, uint8_t row ){
 /*! ############################################################################
     @brief
     Sets the mask value at a given pixel coordinate.
-        
+
     @param   x      X pixel coordinate
     @param   y      Y pixel coordinate
 	@param   value  Mask value
@@ -2248,7 +2248,7 @@ void PixieChroma::set_pixel_mask( int32_t x, int32_t y, uint8_t value ){
 /*! ############################################################################
     @brief
     Sets the RGB color value at a given pixel coordinate.
-        
+
     @param   x      X pixel coordinate
     @param   y      Y pixel coordinate
 	@param   color  CRGB color
@@ -2262,25 +2262,25 @@ void PixieChroma::set_pixel_color( int32_t x, int32_t y, CRGB color ){
     @brief
 	Shifts the mask data by `amount` on the X axis. Useful for scrolling or
 	justification!
-    
+
     @param   amount  Amount in whole-pixels to shift the mask data
     @param   row     If not the default (-1), shift only the specified row
 *///............................................................................
 void PixieChroma::shift_mask_x( int16_t amount, int16_t row ){
 	int16_t y_start = 0;
 	int16_t y_end   = matrix_height;
-	
+
 	if(row != -1){
 		y_start = display_height*row;
 		y_end   = display_height*(row+1);
 	}
-	
+
 	if(amount < 0){
 		for( uint16_t x = 0; x < matrix_width; x++ ){
 			for( uint16_t y = y_start; y < y_end; y++ ){
 				int16_t x_dest = x - amount;
 				int16_t y_dest = y - 0;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					mask[ xy( x,y )  ] = mask[ xy( x_dest, y_dest ) ];
 				}
@@ -2295,7 +2295,7 @@ void PixieChroma::shift_mask_x( int16_t amount, int16_t row ){
 			for( uint16_t y = y_start; y < y_end; y++ ){
 				int16_t x_dest = x - amount;
 				int16_t y_dest = y - 0;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					mask[ xy( x,y )  ] = mask[ xy( x_dest, y_dest ) ];
 				}
@@ -2311,7 +2311,7 @@ void PixieChroma::shift_mask_x( int16_t amount, int16_t row ){
 /*! ############################################################################
     @brief
 	Shifts the mask data by `amount` on the Y axis. Useful for scrolling!
-    
+
     @param   amount  Amount in whole-pixels to shift the mask data
 *///............................................................................
 void PixieChroma::shift_mask_y( int16_t amount ){
@@ -2320,7 +2320,7 @@ void PixieChroma::shift_mask_y( int16_t amount ){
 			for( uint16_t x = 0; x < matrix_width; x++ ){
 				int16_t x_dest = x - 0;
 				int16_t y_dest = y - amount;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					mask[ xy( x,y )  ] = mask[ xy( x_dest, y_dest ) ];
 				}
@@ -2335,7 +2335,7 @@ void PixieChroma::shift_mask_y( int16_t amount ){
 			for( uint16_t x = 0; x < matrix_width; x++ ){
 				int16_t x_dest = x - 0;
 				int16_t y_dest = y - amount;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					mask[ xy( x,y )  ] = mask[ xy( x_dest, y_dest ) ];
 				}
@@ -2352,32 +2352,32 @@ void PixieChroma::shift_mask_y( int16_t amount ){
     @brief
 	Shifts the color_map data by `amount` on the X axis. Useful for scrolling or
 	justification!
-    
+
     @param   amount  Amount in whole-pixels to shift the color map data
     @param   row     If not the default (-1), shift only the specified row
 *///............................................................................
 void PixieChroma::shift_color_map_x( int16_t amount, int16_t row ){
 	int16_t y_start = 0;
 	int16_t y_end   = matrix_height;
-	
+
 	if(row != -1){
 		y_start = display_height*row;
 		y_end   = display_height*(row+1);
 	}
-	
+
 	if(amount < 0){
 		for( uint16_t x = 0; x < matrix_width; x++ ){
 			for( uint16_t y = y_start; y < y_end; y++ ){
 				int16_t x_dest = x - amount;
 				int16_t y_dest = y - 0;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					color_map[ xy( x,y )  ] = color_map[ xy( x_dest, y_dest ) ];
 				}
 				else{
 					color_map[ xy( x,y )  ] = 0;
 				}
-				
+
 			}
 		}
 	}
@@ -2386,7 +2386,7 @@ void PixieChroma::shift_color_map_x( int16_t amount, int16_t row ){
 			for( uint16_t y = y_start; y < y_end; y++ ){
 				int16_t x_dest = x - amount;
 				int16_t y_dest = y - 0;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					color_map[ xy( x,y )  ] = color_map[ xy( x_dest, y_dest ) ];
 				}
@@ -2402,16 +2402,16 @@ void PixieChroma::shift_color_map_x( int16_t amount, int16_t row ){
 /*! ############################################################################
     @brief
 	Shifts the color map data by `amount` on the Y axis. Useful for scrolling!
-    
+
     @param   amount  Amount in whole-pixels to shift the color map data
 *///............................................................................
-void PixieChroma::shift_color_map_y( int16_t amount ){	
+void PixieChroma::shift_color_map_y( int16_t amount ){
 	if(amount < 0){
 		for( uint16_t x = 0; x < matrix_width; x++ ){
 			for( uint16_t y = 0; y < matrix_height; y++ ){
 				int16_t x_dest = x - 0;
 				int16_t y_dest = y - amount;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					color_map[ xy( x,y )  ] = color_map[ xy( x_dest, y_dest ) ];
 				}
@@ -2426,13 +2426,13 @@ void PixieChroma::shift_color_map_y( int16_t amount ){
 			for( uint16_t y = 0; y < matrix_height; y++ ){
 				int16_t x_dest = x - amount;
 				int16_t y_dest = y - 0;
-				
+
 				if(x_dest >= 0 && y_dest >= 0 && x_dest < matrix_width && y_dest < matrix_height){
 					color_map[ xy( x,y )  ] = color_map[ xy( x_dest, y_dest ) ];
 				}
 				else{
 					color_map[ xy( x,y )  ] = 0;
-				}				
+				}
 			}
 		}
 	}
@@ -2443,10 +2443,10 @@ void PixieChroma::shift_color_map_y( int16_t amount ){
     @brief
     This wrapper function returns the 1D color_map / mask index of a given
 	OpenGL-style UV coordinate in the display matrix.
-    
+
     @details
     See xy(). UV Map:
-	
+
 		+-------------------+
 		|0, 1           1, 1|
 		|                   |
@@ -2454,7 +2454,7 @@ void PixieChroma::shift_color_map_y( int16_t amount ){
 		|                   |
 		|0, 0     >     1, 0|
 		+-------------------+
-    
+
     @param   x     Floating-point UV X coordinate
     @param   y     Floating-point UV Y coordinate
     @param   wrap  Enable wrapping function **[optional]**
@@ -2475,9 +2475,9 @@ uint16_t PixieChroma::uv( float x, float y, bool wrap ) {
 			y -= 1.0;
 		}
 	}
-	
+
 	y = 1.0-y; // Invert Y axis for OpenGL coordinate style
-	
+
 	return xy(
 		uint16_t( matrix_width  * x ),
 		uint16_t( matrix_height * y )
@@ -2489,40 +2489,40 @@ uint16_t PixieChroma::uv( float x, float y, bool wrap ) {
     @brief
     This function returns the 1D color_map / mask index of a given 2D coordinate
     in the display matrix.
-              
+
     @details
     The XY Table is generated during `begin()` by an internal function,
     `calc_xy()`. Each cell of the table denotes at what index that physical
     pixel location is inside of the 1D color_map / mask arrays.
-    
+
     For example, here is the XY Table for a single Pixie:
-    
+
     |       |        |        |        |        |        |       |       |        |        |        |        |        |       |
     |-------|--------|--------|--------|--------|--------|-------|-------|--------|--------|--------|--------|--------|-------|
     | *70*  | *71*   | *72*   | *73*   | *74*   | *75*   | *76*  | *77*  | *78*   | *79*   | *80*   | *81*   | *82*   | *83*  |
-    | *84*  | *85*   | *86*   | *87*   | *88*   | *89*   | *90*  | *91*  | *92*   | *93*   | *94*   | *95*   | *96*   | *97*  | 
-    | *98*  | **0**  | **1**  | **2**  | **3**  | **4**  | *99*  | *100* | **35** | **36** | **37** | **38** | **39** | *101* | 
-    | *102* | **5**  | **6**  | **7**  | **8**  | **9**  | *103* | *104* | **40** | **41** | **42** | **43** | **44** | *105* | 
-    | *106* | **10** | **11** | **12** | **13** | **14** | *107* | *108* | **45** | **46** | **47** | **48** | **49** | *109* | 
-    | *110* | **15** | **16** | **17** | **18** | **19** | *111* | *112* | **50** | **51** | **52** | **53** | **54** | *113* | 
-    | *114* | **20** | **21** | **22** | **23** | **24** | *115* | *116* | **55** | **56** | **57** | **58** | **59** | *117* | 
-    | *118* | **25** | **26** | **27** | **28** | **29** | *119* | *120* | **60** | **61** | **62** | **63** | **64** | *121* | 
-    | *122* | **30** | **31** | **32** | **33** | **34** | *123* | *124* | **65** | **66** | **67** | **68** | **69** | *125* | 
-    | *126* | *127*  | *128*  | *129*  | *130*  | *131*  | *132* | *133* | *134*  | *135*  | *136*  | *137*  | *138*  | *139* | 
+    | *84*  | *85*   | *86*   | *87*   | *88*   | *89*   | *90*  | *91*  | *92*   | *93*   | *94*   | *95*   | *96*   | *97*  |
+    | *98*  | **0**  | **1**  | **2**  | **3**  | **4**  | *99*  | *100* | **35** | **36** | **37** | **38** | **39** | *101* |
+    | *102* | **5**  | **6**  | **7**  | **8**  | **9**  | *103* | *104* | **40** | **41** | **42** | **43** | **44** | *105* |
+    | *106* | **10** | **11** | **12** | **13** | **14** | *107* | *108* | **45** | **46** | **47** | **48** | **49** | *109* |
+    | *110* | **15** | **16** | **17** | **18** | **19** | *111* | *112* | **50** | **51** | **52** | **53** | **54** | *113* |
+    | *114* | **20** | **21** | **22** | **23** | **24** | *115* | *116* | **55** | **56** | **57** | **58** | **59** | *117* |
+    | *118* | **25** | **26** | **27** | **28** | **29** | *119* | *120* | **60** | **61** | **62** | **63** | **64** | *121* |
+    | *122* | **30** | **31** | **32** | **33** | **34** | *123* | *124* | **65** | **66** | **67** | **68** | **69** | *125* |
+    | *126* | *127*  | *128*  | *129*  | *130*  | *131*  | *132* | *133* | *134*  | *135*  | *136*  | *137*  | *138*  | *139* |
     | *140* | *141*  | *142*  | *143*  | *144*  | *145*  | *146* | *147* | *148*  | *149*  | *150*  | *151*  | *152*  | *153* |
-    
+
     - **BOLD** = Visible Pixel
     - *ITALIC* = Invisible Pixel
-    
+
     With this example table, a given XY coordinate of `(3, 4)` would return
     `12`. Thus, modifying the color_map or mask at index `12` would influence
     the pixel at the physical location of `(3, 4)`.
-    
+
     Starting from `0` at the top-left with the first visible pixel, (of the first
     display in the XY Table) the index increases to `69`, (the last visible
     pixel in the matrix) before starting to count invisible pixels at index `70`
     and up through `153`.
-    
+
     With this example table setup, the first 70 indices of color_map / mask are
     visible pixels, and the remaining 84 are invisible. (Simulated margin between
     displays)
@@ -2530,10 +2530,10 @@ uint16_t PixieChroma::uv( float x, float y, bool wrap ) {
     Optionally, the result of this function can be run through a wrapping
     function that allows coordinates out of range to wrap around to the
     opposite side of the 2D matrix.
-    
+
     If wrap is not enabled, any coordinates outside of the display matrix will
     be parsed to a 1D index that is completely unused and unseen.
-        
+
     @param   x     Signed 2D X coordinate
     @param   y     Signed 2D Y coordinate
     @param   wrap  Enable wrapping function **[optional]**
@@ -2582,9 +2582,9 @@ uint16_t PixieChroma::xy( int32_t x, int32_t y, bool wrap ) {
 void PixieChroma::build_controller( const uint8_t pin ){
     // FastLED control pin has to be defined as a constant, ( not just declared const, it's weirdly different ) so
     // this is a hacky workaround. Since we have to hardwire the damn pin number variable, we also have
-    // to be careful of the current architecture we're compiling to, since FastLED doesn't let you 
+    // to be careful of the current architecture we're compiling to, since FastLED doesn't let you
     // define non-existent pins either.
-    
+
     #ifdef ARDUINO_ARCH_ESP8266
         if ( pin == 0 ){FastLED.addLeds<WS2812B, 0, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
         if ( pin == 1 ){FastLED.addLeds<WS2812B, 1, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
@@ -2599,7 +2599,7 @@ void PixieChroma::build_controller( const uint8_t pin ){
         if ( pin == 15 ){FastLED.addLeds<WS2812B, 15, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
         if ( pin == 16 ){FastLED.addLeds<WS2812B, 16, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
     #endif
-    
+
     #ifdef ARDUINO_ARCH_ESP32
         if ( pin == 0 ){FastLED.addLeds<WS2812B, 0, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
         if ( pin == 1 ){FastLED.addLeds<WS2812B, 1, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
@@ -2624,7 +2624,7 @@ void PixieChroma::build_controller( const uint8_t pin ){
         if ( pin == 32 ){FastLED.addLeds<WS2812B, 32, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
         if ( pin == 33 ){FastLED.addLeds<WS2812B, 33, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
     #endif
-    
+
     #ifdef ARDUINO_ARCH_TEENSY_3_X
         if ( pin == 0 ){FastLED.addLeds<WS2812B, 0, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
         if ( pin == 1 ){FastLED.addLeds<WS2812B, 1, GRB>( color_map_out, led_count ).setCorrection( TypicalLEDStrip );}
@@ -2654,7 +2654,7 @@ void PixieChroma::build_controller( const uint8_t pin ){
 }
 
 
-void PixieChroma::calc_xy(){	
+void PixieChroma::calc_xy(){
   // Initialize XY table
     for( uint16_t yi = 0; yi < chars_y; yi++ ){
         for( uint16_t y = 0; y < 11; y++ ){
@@ -2752,7 +2752,7 @@ void PixieChroma::calc_xy(){
 }
 
 
-void PixieChroma::fetch_shortcode( char* message, uint16_t code_start, uint16_t code_end, bool return_code ){
+void PixieChroma::fetch_shortcode( const char* message, uint16_t code_start, uint16_t code_end, bool return_code ){
 	if( message[code_start] == '#' ){ // custom data, no lookup needed
 		parse_custom_shortcode( message, code_start+1, code_end, return_code );
 		return;
@@ -2781,7 +2781,7 @@ void PixieChroma::fetch_shortcode( char* message, uint16_t code_start, uint16_t 
 			uint8_t skips = PIXIE_SHORTCODE_LIBRARY[index]-200;
 			index += 1; // Skip the mark byte
 			skips -= 1;
-			
+
 			char first_name_char = PIXIE_SHORTCODE_LIBRARY[index];
 			if(bitmap_name[0] == first_name_char){
 				memset(bitmap_temp, 0, 32);
@@ -2802,7 +2802,7 @@ void PixieChroma::fetch_shortcode( char* message, uint16_t code_start, uint16_t 
 					skips -= 1;
 				}
 				if (strcmp(bitmap_temp, bitmap_name) == 0) { // If a string match is found:
-				
+
 					if(return_code == false){
 						color(print_col, cursor_x/display_width, cursor_y/display_height);
 
@@ -2821,7 +2821,7 @@ void PixieChroma::fetch_shortcode( char* message, uint16_t code_start, uint16_t 
 						temp_code[3] = PIXIE_SHORTCODE_LIBRARY[bitmap_data_index + 3];
 						temp_code[4] = PIXIE_SHORTCODE_LIBRARY[bitmap_data_index + 4];
 					}
-					
+
 					return;
 				}
 			}
@@ -2837,12 +2837,12 @@ void PixieChroma::fetch_shortcode( char* message, uint16_t code_start, uint16_t 
 }
 
 
-void PixieChroma::parse_custom_shortcode( char* message, uint16_t code_start, uint16_t code_end, bool return_code ){
+void PixieChroma::parse_custom_shortcode( const char* message, uint16_t code_start, uint16_t code_end, bool return_code ){
 	uint8_t input[10];
-	
+
 	for(uint8_t i = 0; i < (code_end-code_start); i++){
 		char chr = message[code_start+i];
-		
+
 		if     (chr == '0'){ input[i] = 0;  }
 		else if(chr == '1'){ input[i] = 1;  }
 		else if(chr == '2'){ input[i] = 2;  }
@@ -2860,13 +2860,13 @@ void PixieChroma::parse_custom_shortcode( char* message, uint16_t code_start, ui
 		else if(chr == 'E'){ input[i] = 14; }
 		else if(chr == 'F'){ input[i] = 15; }
 	}
-	
+
 	uint8_t column_1 = input[1] + (input[0]<<4);
 	uint8_t column_2 = input[3] + (input[2]<<4);
 	uint8_t column_3 = input[5] + (input[4]<<4);
 	uint8_t column_4 = input[7] + (input[6]<<4);
 	uint8_t column_5 = input[9] + (input[8]<<4);
-	
+
 	if(return_code == false){
 		color(print_col, cursor_x/display_width, cursor_y/display_height);
 
@@ -2912,7 +2912,7 @@ void PixieChroma::scroll_char(uint8_t* bitmap, uint8_t row){
 		}
 	}
 	show();
-	delay(scroll_hold_ms);	
+	delay(scroll_hold_ms);
 }
 
 
@@ -2920,7 +2920,7 @@ int16_t PixieChroma::calc_justification( t_justification justification, uint8_t 
 	if(justification == LEFT){
 		return 0;
 	}
-	
+
 	uint8_t x_disp_start = 0;
 	uint8_t x_disp_end = 0;
 
@@ -2943,11 +2943,11 @@ int16_t PixieChroma::calc_justification( t_justification justification, uint8_t 
 			}
 		}
 	}
-	
+
 	x_disp_start = x_pos;
 	x_led = 0;
 	x_pos = chars_x;
-	
+
 	for(int16_t x = matrix_width-1; x > 0; x--){
 		for(int16_t y = (display_height*row); y < (display_height*(row+1)); y++){
 			if(mask[ xy(x,y) ] != 0){
@@ -2964,19 +2964,19 @@ int16_t PixieChroma::calc_justification( t_justification justification, uint8_t 
 			}
 		}
 	}
-	
+
 	x_disp_end = x_pos;
-	
+
 	uint8_t length = x_disp_end - x_disp_start;
 	int16_t x_offset_chars;
-	
+
 	if(length > (chars_x-2)){
 		return 0;
 	}
-	
+
 	if(justification == CENTER){
 		x_offset_chars = floor(((chars_x-2) - length) / 2.0);
-		
+
 		if((x_offset_chars*2) + length > (chars_x-2)){
 			x_offset_chars -= 1;
 		}
@@ -2984,7 +2984,7 @@ int16_t PixieChroma::calc_justification( t_justification justification, uint8_t 
 	else if(justification == RIGHT){
 		x_offset_chars = (chars_x-2)-length;
 	}
-	
+
 	return x_offset_chars * display_width;
 }
 
@@ -3028,37 +3028,37 @@ int16_t PixieChroma::calc_justification( t_justification justification, uint8_t 
 /*! ############################################################################
     @brief
     Developer use - automated unit testing of PixieChroma code.
-	
+
 	@return Boolean test pass status
 *///............................................................................
 bool PixieChroma::unit_tests(){
-	//randomSeed( 
+	//randomSeed(
 	//	analogRead( ANALOG_PIN )
 	//);
-	
-	char* border  = "+---------------------------------------------+";
 
-	char* testing = "Testing: ";
-	char* PASS    = "PASS";
-	char* FAIL    = "FAIL\n--------------------------------------------------------- #####";
+	const char* border  = "+---------------------------------------------+";
+
+	const char* testing = "Testing: ";
+	const char* PASS    = "PASS";
+	const char* FAIL    = "FAIL\n--------------------------------------------------------- #####";
 	bool  success = true;
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ begin ---------------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("begin() ......................... "));
 	uint8_t fail_step = 0;
-	
+
 	begin_quad( // 12 Pixies, (6x2) in quad mode
 		UNIT_TEST_PIXIES_PER_PIN,
 		UNIT_TEST_PIXIES_X,
 		UNIT_TEST_PIXIES_Y
 	);
-	
+
 	if( chars_x               != 12   ){ fail_step = 1;  }
 	if( chars_y               != 2    ){ fail_step = 2;  }
 	if( matrix_width          != 84   ){ fail_step = 3;  }
@@ -3068,10 +3068,10 @@ bool PixieChroma::unit_tests(){
 	if( xy_table[0]           != 840  ){ fail_step = 7;  }
 	if( xy_table[500]         != 402  ){ fail_step = 8;  }
 	if( color_map[0].g        != 255  ){ fail_step = 9;  }
-	
+
 	if(fail_step == 0){
 		Serial.println(PASS);
-		
+
 		clear();
 		print("------------------------");
 	}
@@ -3079,28 +3079,28 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		Serial.print("FAIL_STEP: ");
 		Serial.println(fail_step);
-		
+
 		success = false;
 	}
-		
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ xy ------------------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("xy() ............................ "));
 	fail_step = 0;
-		
+
 	if( xy(0, 0 ) != 840  ){ fail_step = 1; } // top left
 	if( xy(83,0 ) != 923  ){ fail_step = 2; } // top right
 	if( xy(0, 21) != 1764 ){ fail_step = 3; } // bottom left
 	if( xy(83,21) != 1847 ){ fail_step = 4; } // bottom_right
 	if( xy(41,10) != 1301 ){ fail_step = 5; } // center
-	
+
 	if(fail_step == 0){
 		Serial.println(PASS);
 	}
@@ -3108,32 +3108,32 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		Serial.print("FAIL_STEP: ");
 		Serial.println(fail_step);
-		
+
 		success = false;
 	}
-		
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ set_brightness ------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("set_brightness() ................ "));
-	
+
 	bool success_temp = true;
 	for(uint8_t i = 0; i < 100; i++){
 		uint8_t rand_brightness = random( 0, 255 );
 		set_brightness( rand_brightness );
 		show();
-		
+
 		if( brightness_level != rand_brightness ){
 			success_temp = false;
 		}
 	}
-	
+
 	if(success_temp == true){
 		set_brightness( 8 );
 		show();
@@ -3143,24 +3143,24 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ set_palette ---------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	set_color_animation(ANIMATION_STATIC);
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("set_palette() ................... "));
-	
+
 	print("------------------------");
-	
+
 	success_temp = true;
-	for(uint8_t i = 0; i < 100; i++){		
+	for(uint8_t i = 0; i < 100; i++){
 		CRGB rands[8] = {
 			CRGB(random(0,255), random(0,255), random(0,255)),
 			CRGB(random(0,255), random(0,255), random(0,255)),
@@ -3171,24 +3171,24 @@ bool PixieChroma::unit_tests(){
 			CRGB(random(0,255), random(0,255), random(0,255)),
 			CRGB(random(0,255), random(0,255), random(0,255))
 		};
-		
+
 		CRGBPalette16 test_palette = CRGBPalette16(
-										rands[0],  rands[1],  rands[2],  rands[3], 
+										rands[0],  rands[1],  rands[2],  rands[3],
 										rands[4],  rands[5],  rands[6],  rands[7],
-										rands[0],  rands[1],  rands[2],  rands[3], 
+										rands[0],  rands[1],  rands[2],  rands[3],
 										rands[4],  rands[5],  rands[6],  rands[7]
 									);
-		
+
 		set_palette( test_palette );
 		show();
-		
+
 		bool success_temp_b = true;
 		for(uint8_t i = 0; i < 8; i++){
 			if(test_palette.entries[i] != rands[i] || test_palette.entries[i+8] != rands[i]){
 				success_temp_b = false;
 			}
 		}
-		
+
 		if(!success_temp_b){
 			success_temp = false;
 		}
@@ -3202,28 +3202,28 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ set_update_mode ------------------------------------------------------------------------ @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("set_update_mode() ............... "));
 	fail_step = 0;
-	
-	set_update_mode(AUTOMATIC);	
+
+	set_update_mode(AUTOMATIC);
 	if(!ticker_running){
 		fail_step = 1;
 	}
-	
-	set_update_mode(MANUAL);	
+
+	set_update_mode(MANUAL);
 	if(ticker_running){
 		fail_step = 2;
-	}	
+	}
 
 	if(fail_step == 0){
 		set_update_mode( MANUAL );
@@ -3234,15 +3234,15 @@ bool PixieChroma::unit_tests(){
 		Serial.println(fail_step);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ write(bitmap) ---------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
 	/*
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("write(bitmap) ..................... "));
@@ -3254,19 +3254,19 @@ bool PixieChroma::unit_tests(){
 	success_temp = true;
 	for(uint8_t x = 0; x < 5; x++){
 		uint8_t column = pgm_read_byte_far( bitmap_HEART+x );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t bitmap_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x, y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(bitmap_val != mask_val){
 				success_temp = false;
 			}
 		}
 	}
-	
+
 	if(success_temp){
 		Serial.println(PASS);
 	}
@@ -3274,14 +3274,14 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
+
 	*/
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ write(int16_t) ------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("write(int16_t) .................. "));
@@ -3295,13 +3295,13 @@ bool PixieChroma::unit_tests(){
 		char chr = '-';
 		chr -= printable_ascii_offset;
 		uint8_t column = pgm_read_byte( font + ( chr * font_col_width + x ) );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t char_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x, y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(char_val != mask_val){
 				success_temp = false;
 			}
@@ -3311,13 +3311,13 @@ bool PixieChroma::unit_tests(){
 		char chr = '2';
 		chr -= printable_ascii_offset;
 		uint8_t column = pgm_read_byte( font + ( chr * font_col_width + x ) );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t char_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x+(display_width*1), y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(char_val != mask_val){
 				success_temp = false;
 			}
@@ -3327,19 +3327,19 @@ bool PixieChroma::unit_tests(){
 		char chr = ' ';
 		chr -= printable_ascii_offset;
 		uint8_t column = pgm_read_byte( font + ( chr * font_col_width + x ) );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t char_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x+(display_width*2), y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(char_val != mask_val){
 				success_temp = false;
 			}
 		}
 	}
-	
+
 	if(success_temp){
 		Serial.println(PASS);
 	}
@@ -3347,15 +3347,15 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ print(bitmap) ---------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
 	/*
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("print(bitmap) ..................... "));
@@ -3367,19 +3367,19 @@ bool PixieChroma::unit_tests(){
 	success_temp = true;
 	for(uint8_t x = 0; x < 5; x++){
 		uint8_t column = pgm_read_byte_far( bitmap_HEART+x );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t bitmap_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x, y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(bitmap_val != mask_val){
 				success_temp = false;
 			}
 		}
 	}
-	
+
 	if(success_temp){
 		Serial.println(PASS);
 	}
@@ -3387,14 +3387,14 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
+
 	*/
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ print(int16_t) ------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("print(int16_t) .................. "));
@@ -3408,13 +3408,13 @@ bool PixieChroma::unit_tests(){
 		char chr = '-';
 		chr -= printable_ascii_offset;
 		uint8_t column = pgm_read_byte( font + ( chr * font_col_width + x ) );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t char_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x, y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(char_val != mask_val){
 				success_temp = false;
 			}
@@ -3424,13 +3424,13 @@ bool PixieChroma::unit_tests(){
 		char chr = '2';
 		chr -= printable_ascii_offset;
 		uint8_t column = pgm_read_byte( font + ( chr * font_col_width + x ) );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t char_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x+(display_width*1), y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(char_val != mask_val){
 				success_temp = false;
 			}
@@ -3440,19 +3440,19 @@ bool PixieChroma::unit_tests(){
 		char chr = ' ';
 		chr -= printable_ascii_offset;
 		uint8_t column = pgm_read_byte( font + ( chr * font_col_width + x ) );
-		
+
 		for(uint8_t y = 0; y < 7; y++){
 			uint8_t char_val = bit_table[ bitRead( column, y ) ];
-			
+
 			uint16_t index = xy(x+display_padding_x+(display_width*2), y+display_padding_y);
 			uint8_t mask_val = mask[index];
-			
+
 			if(char_val != mask_val){
 				success_temp = false;
 			}
 		}
 	}
-	
+
 	if(success_temp){
 		Serial.println(PASS);
 	}
@@ -3460,14 +3460,14 @@ bool PixieChroma::unit_tests(){
 		Serial.println(FAIL);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ set_cursor(2,3) ------------------------------------------------------------------------ @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("set_cursor(2,3) ................. "));
@@ -3477,7 +3477,7 @@ bool PixieChroma::unit_tests(){
 	if(cursor_x != 15 || cursor_y != 35){ // pixel positions calculated
 		success = false;
 	}
-	
+
 	if(success){
 		Serial.println(PASS);
 	}
@@ -3488,14 +3488,14 @@ bool PixieChroma::unit_tests(){
 		Serial.print(',');
 		Serial.println(") != (15,35)");
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ get_cursor_x --------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("get_cursor_x() .................. "));
@@ -3509,14 +3509,14 @@ bool PixieChroma::unit_tests(){
 		Serial.println(" != 2");
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ get_cursor_y --------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("get_cursor_y() .................. "));
@@ -3530,14 +3530,14 @@ bool PixieChroma::unit_tests(){
 		Serial.println(" != 2");
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ get_cursor_x_exact --------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("get_cursor_x_exact() ............ "));
@@ -3551,14 +3551,14 @@ bool PixieChroma::unit_tests(){
 		Serial.println(" != 15");
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ get_cursor_y_exact --------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("get_cursor_y_exact() ............ "));
@@ -3572,18 +3572,18 @@ bool PixieChroma::unit_tests(){
 		Serial.println(" != 35");
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	// ----------------------------------------------------------------------------------------------------
 	// @@@@@ clear ---------------------------------------------------------------------------------- @@@@@
 	// ----------------------------------------------------------------------------------------------------
-	
+
 	Serial.println( border );
 	Serial.print  ( testing );
 	Serial.print(F("clear() ......................... "));
-	
+
 	clear();
 	fail_step = 0;
 
@@ -3592,7 +3592,7 @@ bool PixieChroma::unit_tests(){
 			fail_step = 1;
 		}
 	}
-	
+
 	if(success_temp){
 		if(cursor_x != display_padding_x || cursor_y != display_padding_y){ // Default position after clear()
 			fail_step = 2;
@@ -3607,12 +3607,12 @@ bool PixieChroma::unit_tests(){
 		Serial.println(fail_step);
 		success = false;
 	}
-	
+
 	Serial.println(border);
-	
-	
+
+
 	Serial.println("\nXY MAP:");
 	print_xy_table();
 
-	return success;	
+	return success;
 }

@@ -1,4 +1,4 @@
-/*! 
+/*!
  * @file pixie_chroma_internal.h
  *
  * Designed specifically to work with Pixie Chroma:
@@ -42,9 +42,9 @@ enum t_scroll_type {
 class PixieChroma{
 	public:
 		/** @brief Construct a Pixie Chroma class object */
-		PixieChroma(); 
-		
-		/*+-- Functions - Setup ------------------------------------------------------------*/ 
+		PixieChroma();
+
+		/*+-- Functions - Setup ------------------------------------------------------------*/
 		/*|*/ void begin( const uint8_t data_pin, uint8_t pixies_x, uint8_t pixies_y );
 		/*|*/ void begin_quad( uint8_t pixies_per_pin, uint8_t pixies_x, uint8_t pixies_y );
 		/*|*/ void set_color_animation( void ( *action )( PixieChroma*, float ) );
@@ -59,9 +59,9 @@ class PixieChroma{
 		/*|*/ void set_palette( CRGBPalette16 pal );
 		/*|*/ void set_scroll_type(t_scroll_type type);
 		/*|*/ void set_update_mode( t_update_mode mode, uint16_t FPS = 60 );
-		/*+---------------------------------------------------------------------------------*/ 
-		
-		/*+-- Functions - write(  ) ----------------------------------------------------------*/ 
+		/*+---------------------------------------------------------------------------------*/
+
+		/*+-- Functions - write(  ) ----------------------------------------------------------*/
 		/*|*/ void add_char( char chr, int16_t x_pos, int16_t y_pos );
 		/*|*/ void add_char( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5, int16_t x_pos, int16_t y_pos );
 		/*|*/ void write( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5, uint8_t x_pos = 0, uint8_t y_pos = 0 );
@@ -75,16 +75,16 @@ class PixieChroma{
 		/*|*/ #endif
 		/*|*/ void write( float input, uint8_t places = 2, uint8_t x_pos = 0, uint8_t y_pos = 0 );
 		/*|*/ void write( double input, uint8_t places = 2, uint8_t x_pos = 0, uint8_t y_pos = 0 );
-		/*|*/ 
+		/*|*/
 		/*|*/ void write_pix( char* message, int16_t x_offset = 0, int16_t y_offset = 0 );
 		/*|*/ void write_pix( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5, int16_t x_dest = 0, int16_t y_dest = 0 );
-		/*|*/ 
-		/*+---------------------------------------------------------------------------------*/ 
+		/*|*/
+		/*+---------------------------------------------------------------------------------*/
 
-		/*+-- Functions - print(  ) ----------------------------------------------------------*/ 
+		/*+-- Functions - print(  ) ----------------------------------------------------------*/
 		/*|*/ void print( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5 );
-		/*|*/ void print( char chr );
-		/*|*/ void print( char* message );
+		/*|*/ void print( const char chr );
+		/*|*/ void print( const char* message );
 		/*|*/ void print( int16_t input );
 		/*|*/ void print( uint16_t input );
 		/*|*/ void print( int32_t input );
@@ -94,9 +94,9 @@ class PixieChroma{
 		/*|*/ #endif
 		/*|*/ void print( float input, uint8_t places = 2 );
 		/*|*/ void print( double input, uint8_t places = 2 );
-		/*+---------------------------------------------------------------------------------*/ 
+		/*+---------------------------------------------------------------------------------*/
 
-		/*+-- Functions - println(  ) --------------------------------------------------------*/ 	
+		/*+-- Functions - println(  ) --------------------------------------------------------*/
 		/*|*/ void println( uint8_t bitmap_col_1, uint8_t bitmap_col_2, uint8_t bitmap_col_3, uint8_t bitmap_col_4, uint8_t bitmap_col_5 );
 		/*|*/ void println( char* message );
 		/*|*/ void println( int16_t input );
@@ -110,14 +110,14 @@ class PixieChroma{
 		/*|*/ void println( double input, uint8_t places = 2 );
 		/*+---------------------------------------------------------------------------------*/
 
-		/*+-- Functions - Cursor -----------------------------------------------------------*/ 
+		/*+-- Functions - Cursor -----------------------------------------------------------*/
 		/*|*/ uint8_t get_cursor_x();
 		/*|*/ int16_t get_cursor_x_exact();
 		/*|*/ uint8_t get_cursor_y();
 		/*|*/ int16_t get_cursor_y_exact();
 		/*|*/ void    set_cursor( uint8_t x_position, uint8_t y_position = 0 );
 		/*+---------------------------------------------------------------------------------*/
-		
+
 		/*+-- Functions - Updating the mask/LEDs -------------------------------------------*/
 		/*|*/ void clear();
 		/*|*/ void free();
@@ -125,8 +125,8 @@ class PixieChroma{
 		/*|*/ void show();
 		/*|*/ void delay(uint32_t milliseconds);
 		/*+---------------------------------------------------------------------------------*/
-		
-		/*+-- Functions - Color ------------------------------------------------------------*/ 
+
+		/*+-- Functions - Color ------------------------------------------------------------*/
 		/*|*/ void color( CRGB col ); // Set all displays
 		/*|*/ void color( CRGB col, uint8_t x, uint8_t y ); // Set one display
 		/*|*/ void color( CRGB col, int16_t x1, int16_t y1, int16_t x2, int16_t y2 ); // Set a 2D rectangle
@@ -134,21 +134,21 @@ class PixieChroma{
 		/*|*/ CRGB kelvin_to_rgb( uint16_t temperature ); // Get an approximate CRGB ( not yet gamma corrected ) of a blackbody radiation temperature
 		/*+---------------------------------------------------------------------------------*/
 
-		/*+-- Functions - Mask Effects -----------------------------------------------------*/ 
+		/*+-- Functions - Mask Effects -----------------------------------------------------*/
 		/*|*/ void blur( fract8 blur_amount );
 		/*|*/ void blur_x( fract8 blur_amount );
 		/*|*/ void blur_y( fract8 blur_amount );
 		/*|*/ void dim( uint8_t amount, bool reset_cursor = false ); // Fade towards black by amount
 		/*+---------------------------------------------------------------------------------*/
-		
-		/*+-- Functions - Color Effects ----------------------------------------------------*/ 
+
+		/*+-- Functions - Color Effects ----------------------------------------------------*/
 		/*|*/ void color_blur( fract8 blur_amount );
 		/*|*/ void color_blur_x( fract8 blur_amount );
 		/*|*/ void color_blur_y( fract8 blur_amount );
 		/*|*/ void color_dim( uint8_t amount ); // Fade towards black by amount
 		/*+---------------------------------------------------------------------------------*/
 
-		/*+-- Functions - 2D Tools ---------------------------------------------------------*/ 
+		/*+-- Functions - 2D Tools ---------------------------------------------------------*/
 		/*|*/ void     draw_line_color( int16_t x1, int16_t y1, int16_t x2, int16_t y2, CRGB color );
 		/*|*/ void     draw_line_mask( int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t value = 255 );
 		/*|*/ float    get_uv_x( int32_t x_pixel );
@@ -166,8 +166,8 @@ class PixieChroma{
 		/*|*/ uint16_t uv( float x, float y, bool wrap = false );
 		/*|*/ uint16_t xy( int32_t x, int32_t y, bool wrap = false );
 		/*+---------------------------------------------------------------------------------*/
-		
-		/*+-- Functions - Developer --------------------------------------------------------*/ 
+
+		/*+-- Functions - Developer --------------------------------------------------------*/
 		/*|*/ bool unit_tests();
 		/*+---------------------------------------------------------------------------------*/
 
@@ -181,10 +181,10 @@ class PixieChroma{
         to allow for spatial consistency. (i.e. If a word starts to scroll off the left
         side of one display, it will enter an "invisible" margin before it arrives on
         the next display.
-        
+
             X = Visible
             . = Invisible
-        
+
             . . . . . . . . . . . . . .
             . . . . . . . . . . . . . .
             . X X X X X . . X X X X X .
@@ -196,10 +196,10 @@ class PixieChroma{
             . X X X X X . . X X X X X .
             . . . . . . . . . . . . . .
             . . . . . . . . . . . . . .
-        
+
 		*///............................................................................
         CRGB *color_map;
-    
+
         /*! ############################################################################
         @brief
         Contains the entire mask, including "invisible" areas.
@@ -210,27 +210,27 @@ class PixieChroma{
         there was a *red* circle painted on a *black* paper. This is essentially what
         the mask here is doing: subtracting from the output of the color map, to show
         text or bitmaps.
-        
+
         Note: Pixie Chroma uses "invisible" pixels acting as padding between displays,
         to allow for spatial consistency. (i.e. If a word starts to scroll off the left
         side of one display, it will enter an "invisible" margin before it arrives on
         the next display. (See `CRGB *color_map`.)
-        
+
 		*///............................................................................
         uint8_t *mask;
-    
+
         /*! ############################################################################
         @brief
         The current FastLED CRGBPalette16 used for animations.
 		*///............................................................................
         CRGBPalette16 current_palette;
-        
+
         /*! ############################################################################
         @brief
         Stores the final width of the matrix, including invisible pixels.
 		*///............................................................................
 		uint16_t matrix_width;
-    
+
         /*! ############################################################################
         @brief
         Stores the final height of the matrix, including invisible pixels.
@@ -244,43 +244,43 @@ class PixieChroma{
         This is calculated for you with the display size given to begin().
 		*///............................................................................
 		uint16_t pixel_count;
-    
+
         /*! ############################################################################
         @brief
-        Stores the total number of physical LEDs, not including invisible pixels. This 
+        Stores the total number of physical LEDs, not including invisible pixels. This
         is calculated for you during begin() with an internal function, calc_xy().
 		*///............................................................................
 		uint16_t led_count;
-		
+
         /*! ############################################################################
         @brief
         Used by animation functions as a way of self-regulating speed if performance
         drops, similar to a game engine.
 		*///............................................................................
         float delta = 1.0;
-    
+
         /*! ############################################################################
         @brief
         Used by animation functions to scale the apparent speed of animation.
 		*///............................................................................
 		float animation_speed = 1.0;
-		
+
 		/*! ############################################################################
         @brief
         Allows the user to access a live frame rate calculation (1 frame latency)
 		*///............................................................................
 		float frame_rate;
-		
+
 	private:
 		// Functions ----------------------------------
 		void build_controller( const uint8_t pin );
 		void calc_xy();
-		void fetch_shortcode( char* message, uint16_t code_start, uint16_t code_end, bool return_code = false );
-		void parse_custom_shortcode( char* message, uint16_t code_start, uint16_t code_end, bool return_code = false );
+		void fetch_shortcode( const char* message, uint16_t code_start, uint16_t code_end, bool return_code = false );
+		void parse_custom_shortcode( const char* message, uint16_t code_start, uint16_t code_end, bool return_code = false );
 		int16_t calc_justification( t_justification justification, uint8_t row );
 		void scroll_char(char c, uint8_t row);
 		void scroll_char(uint8_t* bitmap, uint8_t row);
-		
+
 		// Variables ----------------------------------
 		#if defined( ARDUINO_ARCH_ESP8266 ) || defined( ARDUINO_ARCH_ESP32 )
 			Ticker animate;
@@ -305,7 +305,7 @@ class PixieChroma{
 		uint16_t scroll_frame_delay_ms = 10;
 		uint16_t scroll_hold_ms        = 80;
 		t_scroll_type scroll_type = SMOOTH;
-		
+
         CRGB *color_map_out;
         uint8_t *mask_out;
         int16_t *xy_table;
@@ -314,21 +314,21 @@ class PixieChroma{
 		uint8_t temp_code[5];
 
         float    max_V  = 5;
-		uint16_t max_mA = 500;    
+		uint16_t max_mA = 500;
 		uint8_t  brightness_level = 255;
-        
+
 		bool correct_gamma = false;
 		bool line_wrap = true;
 		bool just_wrapped = false;
 		bool custom_animation = false;
-		
+
 		bool freeze = false;
 		bool ticker_running = false;
 		float fps_target = 60;
-		
+
         uint8_t pixie_pin;
 		uint8_t chars_x;
 		uint8_t chars_y;
-}; 
+};
 
 #endif
