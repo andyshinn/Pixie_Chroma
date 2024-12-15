@@ -60,15 +60,12 @@
 	#include <MsTimer2.h> // MsTimer2 for optional automated show() calls
 #else
 	// More coming soon!
-    #error "This library currently only supports ESP8266, ESP32, or TEENSY 3.X controllers. See https:\/\/github.com/connornishijima/Pixie_Chroma#supported-platforms for help."
+	#error "This library currently only supports ESP8266, ESP32, or TEENSY 3.X controllers. See https:\/\/github.com/connornishijima/Pixie_Chroma#supported-platforms for help."
 #endif
 
 #if defined(ARDUINO_ARCH_ESP32)
-    #ifndef FASTLED_ESP32_I2S
-        #define FASTLED_ESP32_I2S true
-    #endif
-    #define FASTLED_RMT_MAX_CHANNELS 4
-    #define FASTLED_ESP32_FLASH_LOCK 1
+	#define FASTLED_RMT_MAX_CHANNELS 4
+	#define FASTLED_ESP32_FLASH_LOCK 1
 #endif
 
 /** @brief Used to quiet unavoidable FastLED warnings about bit banging. */
