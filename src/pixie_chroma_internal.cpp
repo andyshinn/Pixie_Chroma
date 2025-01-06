@@ -81,9 +81,7 @@ PixieChroma::PixieChroma(){}
     @param  pixies_x Number of Pixie PCBs in the X axis of your display
     @param  pixies_y Number of Pixie PCBs in the Y axis of your display
 *///............................................................................
-void PixieChroma::begin( const uint8_t data_pin, uint8_t pixies_x, uint8_t pixies_y ){
-    pixie_pin = data_pin;
-
+void PixieChroma::begin( uint8_t pixies_x, uint8_t pixies_y ){
     chars_x = (pixies_x+1) * 2; // Pixies have two chars each, plus deadzone for scrolling
     chars_y = pixies_y;
 
@@ -795,29 +793,6 @@ void PixieChroma::write( uint32_t input, uint8_t x_pos, uint8_t y_pos ){
 
 /*! ############################################################################
     @brief
-    Writes an unsigned 32-bit integer to a specified X and Y cursor position.
-    ( Stupid ESP-specific type )
-
-    @param  input  Unsigned integer to write
-    @param  x_pos  X cursor position of write **[optional]**
-    @param  y_pos  Y cursor position of write **[optional]**
-*///............................................................................
-#ifndef ARDUINO_ARCH_TEENSY_3_X
-void PixieChroma::write( long unsigned int input, uint8_t x_pos, uint8_t y_pos ){
-    char char_buf[32];
-    ultoa( input, char_buf, 10 );
-
-    write_pix(
-        char_buf,
-        display_padding_x + ( display_width  * x_pos ),
-        display_padding_y + ( display_height * y_pos )
-    );
-}
-#endif
-
-
-/*! ############################################################################
-    @brief
     Writes a single-precision floating point value to a specified X and Y cursor
     position, to a specified number of decimal places.
 
@@ -1157,27 +1132,6 @@ void PixieChroma::print( uint32_t input ){
 	cursor_y = cursor_y_temp;
 }
 
-
-/*! ############################################################################
-    @brief
-    Prints an unsigned 32-bit integer to the displays at the current cursor
-    position. ( Dumb ESP-specific type )
-
-    @param  input  Unsigned integer to print
-*///............................................................................
-#ifndef ARDUINO_ARCH_TEENSY_3_X
-void PixieChroma::print( long unsigned int input ){
-    char char_buf[32];
-    ultoa( input, char_buf, 10 );
-    write_pix( char_buf, cursor_x, cursor_y );
-
-	// Store cursor changes
-	cursor_x = cursor_x_temp;
-	cursor_y = cursor_y_temp;
-}
-#endif
-
-
 /*! ############################################################################
     @brief
     Prints a single-precision floating point value to the displays at the
@@ -1311,22 +1265,6 @@ void PixieChroma::println( uint32_t input ){
     print( input );
 	print('\n');
 }
-
-
-/*! ############################################################################
-    @brief
-    Prints an unsigned 32-bit integer to the displays at the current cursor
-    position, then jumps to the next row in the Pixie display, similar to a
-    newline '\\n' character. ( Stupid ESP-specific type )
-
-    @param  input  Unsigned 32-bit integer to print
-*///............................................................................
-#ifndef ARDUINO_ARCH_TEENSY_3_X
-void PixieChroma::println( long unsigned int input ){
-    print( input );
-	print('\n');
-}
-#endif
 
 
 /*! ############################################################################
