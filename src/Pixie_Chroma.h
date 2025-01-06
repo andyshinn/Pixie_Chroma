@@ -49,6 +49,26 @@
 	to learn more about these platforms and how to add your own support if you'd like.
 */
 
+#ifndef PIXIE_DATA_PIN
+    #define PIXIE_DATA_PIN 2
+#endif
+
+#ifndef QUAD_MODE_PIN1
+    #define QUAD_MODE_PIN1 3
+#endif
+
+#ifndef QUAD_MODE_PIN2
+    #define QUAD_MODE_PIN2 4
+#endif
+
+#ifndef QUAD_MODE_PIN3
+    #define QUAD_MODE_PIN3 5
+#endif
+
+#ifndef QUAD_MODE_PIN4
+    #define QUAD_MODE_PIN4 6
+#endif
+
 #if defined(__MK20DX128__) || defined(__MK20DX256__)
 	#define ARDUINO_ARCH_TEENSY_3_X	1
 #endif
