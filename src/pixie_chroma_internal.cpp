@@ -1451,7 +1451,9 @@ void PixieChroma::show(){
 
     anim_func( this, delta ); // Call custom animation function
 
+#ifdef PIXIE_NO_INTERRUPTS
     noInterrupts();
+#endif
 
 	for(uint8_t i = 0; i < chars_y; i++){
 		if(scrolling[i] == false){
@@ -1485,7 +1487,9 @@ void PixieChroma::show(){
     FastLED.setBrightness( calculate_max_brightness_for_power_vmA( color_map_out, led_count, brightness_level, max_V, max_mA ) );
     FastLED.show();
 
+#ifdef PIXIE_NO_INTERRUPTS
     interrupts();
+#endif
 }
 
 /*! ############################################################################
