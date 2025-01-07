@@ -84,7 +84,6 @@
 #endif
 
 #if defined(ARDUINO_ARCH_ESP32)
-	#define FASTLED_RMT_MAX_CHANNELS 4
 	#define FASTLED_ESP32_FLASH_LOCK 1
 #endif
 
